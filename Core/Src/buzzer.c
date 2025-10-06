@@ -19,7 +19,7 @@ int calculate_pres(int frequency)
 void buzzer_set_freq(int frequency)
 {
     if (frequency <= 0) {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 0);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 0);
         return;
     }
     int pres = calculate_pres(frequency);
@@ -43,6 +43,6 @@ void buzzer_play_sound_impl(const int *tones,
     buzzer.running  = 1;
 
     buzzer_set_freq(buzzer.tone[0]);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 500);   // ~50% duty
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 500);   // ~50% duty
     buzzer.ms_left = (uint32_t)buzzer.duration[0];
 }

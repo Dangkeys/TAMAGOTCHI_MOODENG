@@ -208,8 +208,8 @@ int main(void)
 
     //Buzzer
     HAL_TIM_Base_Start_IT(&htim3);
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 500); //duty cycle 50% (loudest)
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 500); //duty cycle 50% (loudest)
     buzzer_play_sound(mario);
 //    __HAL_TIM_SET_PRESCALER(&htim2, 53);
 
@@ -334,7 +334,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 
 		if (buzzer.state == BUZZ_PLAYING) {
-			__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 0);
+			__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 0);
 
 			uint32_t totalBeat =
 					buzzer.pause ?
@@ -354,11 +354,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				// Sequence finished
 				buzzer.running = 0;
 				buzzer.state = BUZZ_IDLE;
-				__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 0);
+				__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 0);
 			} else {
 				// Start next tone
 				buzzer_set_freq(buzzer.tone[buzzer.idx]);
-				__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 500);
+				__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 500);
 				buzzer.ms_left = buzzer.duration[buzzer.idx];
 				buzzer.state = BUZZ_PLAYING;
 			}
