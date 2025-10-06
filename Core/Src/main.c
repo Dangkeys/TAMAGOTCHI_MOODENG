@@ -31,6 +31,7 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "ILI9341_Touchscreen.h"
+#include "flash.h"
 
 #include "ILI9341_STM32_Driver.h"
 #include "ILI9341_GFX.h"
@@ -119,15 +120,37 @@ static void print_adc_line()
     }
 }
 
-void printValue(float value)
+void printStart()
 {
     char msg[32];
-    int n = snprintf(msg, sizeof(msg), "Value: %.2f\r\n", value);
+    int n = snprintf(msg, sizeof(msg), "Start %.2f\r\n", 0.0f);
     if (n > 0)
     {
         HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
     }
 }
+
+
+void printHunger(float value)
+{
+    char msg[32];
+    int n = snprintf(msg, sizeof(msg), "Hunger: %.2f\r\n", value);
+    if (n > 0)
+    {
+        HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
+    }
+}
+
+void printHappy(float value)
+{
+    char msg[32];
+    int n = snprintf(msg, sizeof(msg), "Happy: %.2f\r\n", value);
+    if (n > 0)
+    {
+        HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
+    }
+}
+
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
@@ -186,8 +209,17 @@ int main(void)
     MX_TIM1_Init();
     MX_RNG_Init();
     MX_ADC1_Init();
-    Moodeng_Init(&moodeng);
     /* USER CODE BEGIN 2 */
+    if (!Flash_IsDataValid(NEXTDECAYHAPPY_ADDRESS))
+    {
+        Moodeng_Init(&moodeng);
+        Flash_Write_NUM(NEXTDECAYHAPPY_ADDRESS, moodeng.nextDecayHappy);
+        Flash_Write_NUM(NEXTDECAYHUNGER_ADDRESS, moodeng.nextDecayHunger);
+    }
+    float happy = Flash_Read_NUM(NEXTDECAYHAPPY_ADDRESS);
+    float hunger = Flash_Read_NUM(NEXTDECAYHUNGER_ADDRESS);
+    printStart();
+//    printValueMemory(weight);
 
     ILI9341_Init(); // initial driver setup to drive ili9341
     ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
@@ -213,6 +245,9 @@ int main(void)
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
+        printHappy(happy);
+        printHunger(hunger);
+        HAL_Delay(500);
 
         //    if (shouldClearScreen)
         //    {
@@ -220,9 +255,8 @@ int main(void)
         //      Display_Screen();
         //    }
 
-
-        printValue(moodeng.nextDecayHappy);
-        HAL_Delay(100);
+        // printValue(moodeng.nextDecayHappy);
+        // HAL_Delay(100);
         // uint32_t currentTime = HAL_GetTick();
 
         // UIManager_Update(&ui, currentTime);

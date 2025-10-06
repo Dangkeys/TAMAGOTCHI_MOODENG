@@ -1,8 +1,10 @@
 ../Drivers/CMSIS/Include/core_cm7.h:2229:22:SCB_EnableICache	1
 ../Drivers/CMSIS/Include/core_cm7.h:2281:22:SCB_EnableDCache	3
-../Core/Src/main.c:98:13:print_adc_line	2
-../Core/Src/main.c:122:6:printValue	2
-../Core/Src/main.c:132:6:HAL_ADC_ConvCpltCallback	2
-../Core/Src/main.c:150:5:main	1
-../Core/Src/main.c:258:6:SystemClock_Config	4
-../Core/Src/main.c:318:6:Error_Handler	1
+../Core/Src/main.c:99:13:print_adc_line	2
+../Core/Src/main.c:123:6:printStart	2
+../Core/Src/main.c:134:6:printHunger	2
+../Core/Src/main.c:144:6:printHappy	2
+../Core/Src/main.c:155:6:HAL_ADC_ConvCpltCallback	2
+../Core/Src/main.c:173:5:main	2
+../Core/Src/main.c:292:6:SystemClock_Config	4
+../Core/Src/main.c:352:6:Error_Handler	1
