@@ -1,6 +1,5 @@
-Core/Src/ui_manager.o: ../Core/Src/ui_manager.c ../Core/Inc/ui_manager.h \
- ../Core/Inc/sprite_animator.h \
- C:/Users/coppe/OneDrive/Documents/GitHub/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h \
+Core/Src/buzzer.o: ../Core/Src/buzzer.c ../Core/Inc/buzzer.h \
+ ../Core/Inc/tim.h ../Core/Inc/main.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h \
  ../Core/Inc/stm32f7xx_hal_conf.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc.h \
@@ -35,12 +34,10 @@ Core/Src/ui_manager.o: ../Core/Src/ui_manager.c ../Core/Inc/ui_manager.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h \
- ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h \
- ../Core/Inc/pet_sprites.h \
- C:/Users/coppe/OneDrive/Documents/GitHub/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_STM32_Driver.h
-../Core/Inc/ui_manager.h:
-../Core/Inc/sprite_animator.h:
-C:/Users/coppe/OneDrive/Documents/GitHub/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h:
+ ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h
+../Core/Inc/buzzer.h:
+../Core/Inc/tim.h:
+../Core/Inc/main.h:
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h:
 ../Core/Inc/stm32f7xx_hal_conf.h:
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc.h:
@@ -76,5 +73,3 @@ C:/Users/coppe/OneDrive/Documents/GitHub/767_SPI_ILI9341_2/Drivers/ILI9341/ILI93
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h:
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h:
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h:
-../Core/Inc/pet_sprites.h:
-C:/Users/coppe/OneDrive/Documents/GitHub/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_STM32_Driver.h:
