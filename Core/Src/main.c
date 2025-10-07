@@ -270,8 +270,7 @@ int main(void)
     HAL_TIM_Base_Start_IT(&htim3);
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
     __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 500); //duty cycle 50% (loudest)
-//    buzzer_play_sound(mario);
-
+    //buzzer_play_sound(mario);
 //    __HAL_TIM_SET_PRESCALER(&htim2, 53);
 
   //  if (HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buf, ADC_CH_COUNT) != HAL_OK) {
