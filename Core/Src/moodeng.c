@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include "rng.h"
 #include "ui_manager.h"
+#include "buzzer.h"
+#include "sound.h"
 extern UIManager_t ui;
 
 // Default starting stats (easier tuning)
@@ -27,7 +29,6 @@ extern UIManager_t ui;
 #define MOODENG_INIT_SLEEPYTIME   480
 #define MOODENG_DIRTY_TIME        30
 #define MOODENG_HURT_TIME         30
-
 
 void Moodeng_Init(Moodeng_t* moodeng) {
     moodeng->happy = MOODENG_INIT_HAPPY;
@@ -138,6 +139,8 @@ void checkEvolution(Moodeng_t* moodeng, Clock_t* gameClock) {
                 moodeng->evolution = 1;
                 moodeng->discipline += 2;
                 if (moodeng->discipline > 6) moodeng->discipline = 6;
+                //Sound Evolution
+                buzzer_play_sound(sound_evolution);
             }
             break;
 
@@ -146,6 +149,8 @@ void checkEvolution(Moodeng_t* moodeng, Clock_t* gameClock) {
                 moodeng->evolution = 2;
                 moodeng->discipline += 3;
                 if (moodeng->discipline > 6) moodeng->discipline = 6;
+                //Sound Evolution
+                buzzer_play_sound(sound_evolution);
             }
             break;
 
@@ -154,12 +159,16 @@ void checkEvolution(Moodeng_t* moodeng, Clock_t* gameClock) {
                 moodeng->evolution = 3;
                 moodeng->discipline += 4;
                 if (moodeng->discipline > 6) moodeng->discipline = 6;
+                //Sound Evolution
+                buzzer_play_sound(sound_evolution);
             }
             break;
 
         case 3:
             if (moodeng->happy == 6) {
                 ui.activeAnim = &winAnim;
+                //Game Win
+                buzzer_play_sound(sound_game_win);
             }
             break;
 
@@ -177,6 +186,8 @@ static void Moodeng_HandleDecay(int* timer, int* stat, int minRand, int maxRand,
                 *stat = 0;
                 moodeng->isAlive = false;
                 ui.activeAnim = &loseAnim;
+                //Sound game lose
+                buzzer_play_sound(sound_game_lose);
             }
             *timer = Moodeng_GenerateRandomNumber(moodeng, minRand, maxRand);
         }
@@ -213,6 +224,8 @@ void Moodeng_Update(Moodeng_t* moodeng) {
             if (randomProb < Moodeng_SickChance(moodeng)) {
                 moodeng->isSick = true;
                 moodeng->nextHurtTime = MOODENG_HURT_TIME;
+                //Sound Sick
+                buzzer_play_sound(sound_sick);
             }
             moodeng->nextSickTime = MOODENG_INIT_SICKTIME;
         }
@@ -223,6 +236,8 @@ void Moodeng_Update(Moodeng_t* moodeng) {
         if (moodeng->nextHurtTime == 0) {
             moodeng->happy--;
             moodeng->hunger--;
+            //Sound Sick
+            buzzer_play_sound(sound_sick);
             if(moodeng->isSick == true) moodeng->nextHurtTime = MOODENG_HURT_TIME;
         }
     }
