@@ -43,12 +43,14 @@ typedef struct {
     MenuState_t selectedState;   // Currently highlighted but not confirmed
     SpriteAnimator_t* activeAnim;
     SpriteAnimator_t* menuBarAnim;
+    SpriteAnimator_t* heartAnim;
+    SpriteAnimator_t* hungerAnim;
     SpriteAnimator_t* selectedStateAnim;
     uint16_t lightLevel;         // Store latest LDR ADC value
     bool isLightOn;              // Cached state (to avoid flickering)
 } UIManager_t;
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
+#define SCREEN_WIDTH 240
+#define SCREEN_HEIGHT 320
 void UIManager_Init(UIManager_t* ui);
 void UIManager_SetState(UIManager_t* ui, MenuState_t newState);
 void UIManager_Update(UIManager_t* ui, uint32_t currentTime);
