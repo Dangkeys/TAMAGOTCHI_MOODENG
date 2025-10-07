@@ -33,9 +33,9 @@ typedef enum {
     MENU_MAIN = 0,
     MENU_FEED,
     MENU_PLAY,
-    MENU_SLEEP,
+    MENU_MEDICINE,
     MENU_CLEAN,
-    MENU_MEDICINE
+    MENU_SLEEP
 } MenuState_t;
 
 typedef struct {
@@ -43,6 +43,7 @@ typedef struct {
     MenuState_t selectedState;   // Currently highlighted but not confirmed
     SpriteAnimator_t* activeAnim;
     SpriteAnimator_t* menuBarAnim;
+    SpriteAnimator_t* selectedStateAnim;
     uint16_t lightLevel;         // Store latest LDR ADC value
     bool isLightOn;              // Cached state (to avoid flickering)
 } UIManager_t;

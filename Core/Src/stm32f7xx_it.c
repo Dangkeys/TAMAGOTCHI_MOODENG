@@ -49,8 +49,7 @@ extern Moodeng_t moodeng;
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-//extern PetState_t currentState;
-//extern PetState_t selectNextState;
+
 extern bool shouldClearScreen;
 
 extern UIManager_t ui;
