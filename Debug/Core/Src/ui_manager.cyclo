@@ -1,4 +1,5 @@
-../Core/Src/ui_manager.c:24:6:UIManager_Init	1
-../Core/Src/ui_manager.c:45:6:UIManager_SetState	4
-../Core/Src/ui_manager.c:61:6:UIManager_Update	6
-../Core/Src/ui_manager.c:99:6:UIManager_Draw	14
+../Core/Src/ui_manager.c:36:6:UIManager_Init	1
+../Core/Src/ui_manager.c:86:6:UIManager_SetState	7
+../Core/Src/ui_manager.c:106:6:UIManager_Update	6
+../Core/Src/ui_manager.c:144:6:UIManager_Draw	3
+../Core/Src/ui_manager.c:161:6:UIManager_Display_text	13

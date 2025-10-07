@@ -39,6 +39,7 @@
 
 #include "ui_manager.h"
 #include "moodeng.h"
+#include "timer.h"
 #include "stm32f7xx_hal.h"
 #include "buzzer.h"
 #include <string.h>
@@ -63,8 +64,6 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
 // PetState_t currentState = STATE_IDLE_STATUS;
 bool shouldClearScreen = false;
 // PetState_t selectNextState = STATE_IDLE_STATUS;
@@ -80,7 +79,14 @@ bool shouldClearScreen = false;
 
 UIManager_t ui;
 Moodeng_t moodeng;
+Clock_t gameClock;
 uint32_t lastUpdateTime = 0;
+
+typedef enum {
+    MEAL = 0,
+    SNACK
+} Food_t;
+Food_t foodSelected = MEAL;
 
 //Sound
 extern const int mario[2][52];
@@ -93,30 +99,50 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define VREF_mV 3300u
-#define ADC_MAX 4095u
-#define ADC_CH_COUNT 1
-uint16_t adc_buf[ADC_CH_COUNT];
-volatile uint32_t adc_val = 0;
-static const uint8_t channel_map[ADC_CH_COUNT] = {10};
-
-static void print_adc_line()
+void printStatus(void)
 {
-    char msg[160];
-
-    uint16_t raw = adc_buf[0];
-    uint32_t millivolts = (raw * VREF_mV + (ADC_MAX / 2)) / ADC_MAX;
-
-    uint32_t volts_whole = millivolts / 1000;
-    uint32_t volts_frac = (millivolts % 1000) / 10; // 2 decimal places
-
-    // Format: ADC1_CHxx 0x0000xxxx  Vin = x.xx V
+    char msg[512];
     int n = snprintf(msg, sizeof(msg),
-                     "ADC1_CH%-2d  0x%08lX  Vin = %lu.%02lu V\r\n",
-                     channel_map[0],
-                     (unsigned long)raw,
-                     (unsigned long)volts_whole,
-                     (unsigned long)volts_frac);
+        "Time: %02d:%02d:%02d\r\n"
+        "Happy: %d\r\n"
+        "Weight: %d\r\n"
+        "Hunger: %d\r\n"
+        "PoopCount: %d\r\n"
+        "PoopRate: %.2f\r\n"
+        "isSick: %d\r\n"
+        "HealRate: %.2f\r\n"
+        "Discipline: %d\r\n"
+        "isTried: %d\r\n"
+        "Evolution: %d\r\n"
+        "isAlive: %d\r\n"
+        "nextDecayHappy: %d\r\n"
+        "nextDecayHunger: %d\r\n"
+        "nextPoopTime: %d\r\n"
+        "nextSickTime: %d\r\n"
+        "nextHurtTime: %d\r\n"
+        "nextDirtyTime: %d\r\n"
+        "nextSleepyTime: %d\r\n"
+        "--------------------------\r\n",
+        gameClock.hour, gameClock.minute, gameClock.second,
+        moodeng.happy,
+        moodeng.weight,
+        moodeng.hunger,
+        moodeng.poopCount,
+        moodeng.poopRate,
+        moodeng.isSick,
+        moodeng.healRate,
+        moodeng.discipline,
+        moodeng.isTried,
+        moodeng.evolution,
+        moodeng.isAlive,
+        moodeng.nextDecayHappy,
+        moodeng.nextDecayHunger,
+        moodeng.nextPoopTime,
+        moodeng.nextSickTime,
+        moodeng.nextHurtTime,
+        moodeng.nextDirtyTime,
+        moodeng.nextSleepyTime
+    );
 
     if (n > 0)
     {
@@ -124,27 +150,50 @@ static void print_adc_line()
     }
 }
 
-void printValue(float value)
+void printValue(int value)
 {
     char msg[32];
-    int n = snprintf(msg, sizeof(msg), "Value: %.2f\r\n", value);
+    int n = snprintf(msg, sizeof(msg), "Value: %02d\r\n", value);
     if (n > 0)
     {
         HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
     }
 }
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+void printTime(Clock_t *gameClock)
 {
-    if (hadc->Instance == ADC1)
+    char msg[32];
+    int n = snprintf(msg, sizeof(msg), "%02d:%02d:%02d\r", gameClock->hour, gameClock->minute, gameClock->second);
+    if (n > 0)
     {
-        print_adc_line();
-        const char newline[] = "\r\n";
-        HAL_UART_Transmit(&huart3, (uint8_t *)newline, strlen(newline), HAL_MAX_DELAY);
-
-        HAL_ADC_Start_DMA(&hadc1, (uint32_t *)adc_buf, ADC_CH_COUNT);
+        HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
     }
 }
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    switch (GPIO_Pin)
+    {
+      case GPIO_PIN_0:
+        Handle_Button_Yellow();
+        break;
+
+      case GPIO_PIN_3:
+        Handle_Button_Red();
+        break;
+
+      case GPIO_PIN_5:
+        Handle_Button_Blue();
+        break;
+
+      default:
+        break;
+    }
+}
+
+void Handle_Button_Yellow(void);
+void Handle_Button_Red(void);
+void Handle_Button_Blue(void);
 
 /* USER CODE END 0 */
 
@@ -183,29 +232,31 @@ int main(void)
 
   /* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_USART3_UART_Init();
-  MX_SPI5_Init();
-  MX_TIM1_Init();
-  MX_RNG_Init();
-  MX_ADC1_Init();
-  MX_TIM2_Init();
-  MX_TIM3_Init();
-  /* USER CODE BEGIN 2 */
-
+    /* Initialize all configured peripherals */
+    MX_GPIO_Init();
+    MX_DMA_Init();
+    MX_USART3_UART_Init();
+    MX_SPI5_Init();
+    MX_TIM1_Init();
+    MX_RNG_Init();
+    MX_ADC1_Init();
+    MX_TIM2_Init();
+    MX_TIM3_Init();
+    
+    /* USER CODE BEGIN 2 */
+    Moodeng_Init(&moodeng);
+    Timer_Init(&gameClock);
     ILI9341_Init(); // initial driver setup to drive ili9341
     ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
     ILI9341_Fill_Screen(DARKGREY);
     //  Display_Screen();
 
-    UIManager_Init(&ui);
-    ui.menuState = MENU_MAIN;     // confirmed state
-    ui.selectedState = MENU_MAIN; // highlighted state
+  UIManager_Init(&ui);
+  ui.menuState = MENU_MAIN;     // confirmed state
+  ui.selectedState = MENU_MAIN; // highlighted state
 
     HAL_ADC_Start(&hadc1);
-
+    HAL_TIM_Base_Start_IT(&htim1);
     //Buzzer
     HAL_TIM_Base_Start_IT(&htim3);
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
@@ -213,9 +264,9 @@ int main(void)
     buzzer_play_sound(mario);
 //    __HAL_TIM_SET_PRESCALER(&htim2, 53);
 
-    //  if (HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buf, ADC_CH_COUNT) != HAL_OK) {
-    //      Error_Handler();
-    //  }
+  //  if (HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buf, ADC_CH_COUNT) != HAL_OK) {
+  //      Error_Handler();
+  //  }
 
   /* USER CODE END 2 */
 
@@ -223,54 +274,47 @@ int main(void)
   /* USER CODE BEGIN WHILE */
     while (1)
     {
-    /* USER CODE END WHILE */
+        /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    	//buzzer_play_sound(mario);
-        //    if (shouldClearScreen)
-        //    {
-        //      shouldClearScreen = false;
-        //      Display_Screen();
-        //    }
 
+    //    if (shouldClearScreen)
+    //    {
+    //      shouldClearScreen = false;
+    //      Display_Screen();
+    //    }
 
-//        printValue(moodeng.nextDecayHappy);
-//        HAL_Delay(100);
-        // uint32_t currentTime = HAL_GetTick();
+    printStatus();
+    HAL_Delay(100);
+    uint32_t currentTime = HAL_GetTick();
 
-        // UIManager_Update(&ui, currentTime);
+    UIManager_Update(&ui, currentTime);
 
-        // if (currentTime - lastUpdateTime >= 100)
-        // {
-        //     UIManager_Draw(&ui);
-        //     lastUpdateTime = currentTime;
-        // }
+    if (currentTime - lastUpdateTime >= 100)
+    {
+        UIManager_Draw(&ui);
+        lastUpdateTime = currentTime;
+    }
 
-        // if (shouldClearScreen)
-        // {
-        //     shouldClearScreen = false;
-        //     ILI9341_Fill_Screen(DARKGREY);
-        //     UIManager_Draw(&ui);
-        // }
+    if (shouldClearScreen)
+    {
+        ILI9341_Draw_Text("Medicine", 120, 10, DARKGREY, 2, DARKGREY);
+        ILI9341_Draw_Text("Medicine", 120, 40, DARKGREY, 2, DARKGREY);
+        shouldClearScreen = false;
+    }
 
-        //      // Example of switching menu by button:
-        //      if (ButtonPressed(FEED_BUTTON)) {
-        //          UIManager_SetState(&ui, MENU_FEED);
-        //      } else if (ButtonPressed(PLAY_BUTTON)) {
-        //          UIManager_SetState(&ui, MENU_PLAY);
-        //      }
+    /* USER CODE END 3 */
     }
   /* USER CODE END 3 */
 }
-
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
-{
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  /**
+   * @brief System Clock Configuration
+   * @retval None
+   */
+  void SystemClock_Config(void)
+  {
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
   /** Configure LSE Drive Capability
   */
@@ -281,29 +325,29 @@ void SystemClock_Config(void)
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 216;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 9;
-  RCC_OscInitStruct.PLL.PLLR = 2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /** Initializes the RCC Oscillators according to the specified parameters
+     * in the RCC_OscInitTypeDef structure.
+     */
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    RCC_OscInitStruct.PLL.PLLM = 4;
+    RCC_OscInitStruct.PLL.PLLN = 216;
+    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+    RCC_OscInitStruct.PLL.PLLQ = 9;
+    RCC_OscInitStruct.PLL.PLLR = 2;
+    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+    {
+      Error_Handler();
+    }
 
-  /** Activate the Over-Drive mode
-  */
-  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /** Activate the Over-Drive mode
+     */
+    if (HAL_PWREx_EnableOverDrive() != HAL_OK)
+    {
+      Error_Handler();
+    }
 
   /** Initializes the CPU, AHB and APB buses clocks
   */
@@ -314,13 +358,137 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_7) != HAL_OK)
+    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_7) != HAL_OK)
+    {
+      Error_Handler();
+    }
+  }
+
+  /* USER CODE BEGIN 4 */
+void Handle_Button_Yellow(void)
   {
-    Error_Handler();
+    static uint32_t lastTick = 0;
+    uint32_t now = HAL_GetTick();
+    if (now - lastTick < 200) return; // debounce
+    lastTick = now;
+
+    switch (ui.menuState)
+    {
+      case MENU_MAIN:
+        //select action(menu)
+        ui.selectedState = (ui.selectedState + 1) % 6;
+        //skip select main menu
+        if (ui.selectedState == MENU_MAIN)
+          ui.selectedState = MENU_FEED;
+        break;
+      
+      case MENU_FEED:
+        //select food
+        foodSelected = (foodSelected == MEAL) ? SNACK : MEAL;
+        break;
+
+      case MENU_PLAY:
+        //guess left
+        //return true if win
+        if (Moodeng_Minigame(&moodeng, 0)) {
+          ui.activeAnim = &miniGameCorrectAnim;
+        } 
+        else {
+          ui.activeAnim = &miniGameWrongAnim;
+        }
+        break;
+
+      default:
+        break;
+    }
+    shouldClearScreen = true;
+  }
+
+void Handle_Button_Red(void)
+  {
+    static uint32_t lastTick = 0;
+    uint32_t now = HAL_GetTick();
+    if (now - lastTick < 200) return;
+    lastTick = now;
+    //back to main menu
+    if (ui.menuState != MENU_MAIN) {
+        UIManager_SetState(&ui, MENU_MAIN);
+        shouldClearScreen = true;
+    } 
+    //in main menu => scolding
+    else {
+      if (moodeng.emotion != SILLY) moodeng.happy--;
+      else {
+        moodeng.discipline++;
+        moodeng.emotion = SCOLDED;
+      }
+    }
+  }
+
+void Handle_Button_Blue(void)
+{
+  static uint32_t lastTick = 0;
+  uint32_t now = HAL_GetTick();
+  if (now - lastTick < 200) return;
+  lastTick = now;
+
+  switch (ui.menuState)
+  {
+    //confirm switch menu
+    case MENU_MAIN:
+      //check if moodeng agree to feeding (not if it goes silly)
+      if (ui.selectedState == MENU_FEED) {
+        if (Moodeng_Check_Feed(&moodeng))
+            UIManager_SetState(&ui, ui.selectedState);
+        else
+            ui.activeAnim = &stubbornAnim;
+      } 
+      //check if moodeng agree to playing (not if it goes silly)
+      else if (ui.selectedState == MENU_PLAY) {
+        if (Moodeng_Check_Play(&moodeng))
+            UIManager_SetState(&ui, ui.selectedState);
+        else
+            ui.activeAnim = &stubbornAnim;
+      } 
+      else {
+        UIManager_SetState(&ui, ui.selectedState);
+      }
+      shouldClearScreen = true;
+      break;
+
+    case MENU_FEED:
+      //feed meal
+      if (foodSelected == MEAL) {
+        ui.activeAnim = &feedMealAnim;
+        moodeng.hunger += 2;
+        moodeng.weight += 2;
+        moodeng.poopRate += 0.4f;
+      } 
+      //feed snack
+      else {
+        ui.activeAnim = &feedSnackAnim;
+        moodeng.happy += 2;
+        moodeng.weight += 4;
+        moodeng.poopRate += 0.6f;
+      }
+      break;
+
+    case MENU_PLAY:
+      //guess right
+      //return true if win
+      if (Moodeng_Minigame(&moodeng, 1)) {
+        ui.activeAnim = &miniGameCorrectAnim;
+      }
+      else {
+        ui.activeAnim = &miniGameWrongAnim;
+      }
+      break;
+
+    default:
+      break;
   }
 }
 
-/* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if (htim->Instance == TIM3) {
@@ -365,34 +533,34 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 	}
 }
-/* USER CODE END 4 */
+  /* USER CODE END 4 */
 
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
-  /* USER CODE BEGIN Error_Handler_Debug */
+  /**
+   * @brief  This function is executed in case of error occurrence.
+   * @retval None
+   */
+  void Error_Handler(void)
+  {
+    /* USER CODE BEGIN Error_Handler_Debug */
     /* User can add his own implementation to report the HAL error return state */
     while (1)
     {
     }
-  /* USER CODE END Error_Handler_Debug */
-}
+    /* USER CODE END Error_Handler_Debug */
+  }
 #ifdef USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
+  /**
+   * @brief  Reports the name of the source file and the source line number
+   *         where the assert_param error has occurred.
+   * @param  file: pointer to the source file name
+   * @param  line: assert_param error line source number
+   * @retval None
+   */
+  void assert_failed(uint8_t *file, uint32_t line)
+  {
+    /* USER CODE BEGIN 6 */
     /* User can add his own implementation to report the file name and line number,
        tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
+    /* USER CODE END 6 */
+  }
 #endif /* USE_FULL_ASSERT */

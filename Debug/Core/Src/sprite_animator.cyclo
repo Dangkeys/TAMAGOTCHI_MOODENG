@@ -1,4 +1,4 @@
-../Core/Src/sprite_animator.c:13:6:SpriteAnimator_Init	1
-../Core/Src/sprite_animator.c:31:6:SpriteAnimator_Update	2
-../Core/Src/sprite_animator.c:39:6:ILI9341_Draw_PartImage	2
-../Core/Src/sprite_animator.c:51:6:SpriteAnimator_Draw	1
+../Core/Src/sprite_animator.c:14:6:SpriteAnimator_Init	1
+../Core/Src/sprite_animator.c:32:6:SpriteAnimator_Update	2
+../Core/Src/sprite_animator.c:40:6:ILI9341_Draw_PartImage	2
+../Core/Src/sprite_animator.c:88:6:SpriteAnimator_Draw	1
