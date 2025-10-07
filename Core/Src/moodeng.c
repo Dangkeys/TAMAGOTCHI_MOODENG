@@ -10,7 +10,7 @@ extern UIManager_t ui;
 #define MOODENG_INIT_HAPPY        2
 #define MOODENG_INIT_WEIGHT       5
 #define MOODENG_INIT_HUNGER       2
-#define MOODENG_INIT_POOPCOUNT    6
+#define MOODENG_INIT_POOPCOUNT    0
 #define MOODENG_INIT_POOPRATE     0.0f
 #define MOODENG_INIT_ISSICK       false
 #define MOODENG_INIT_HEALRATE     0.5f
@@ -25,7 +25,7 @@ extern UIManager_t ui;
 #define END_DECAY_HUNGER          75
 #define START_POOPTIME            10
 #define END_POOPTIME              30
-#define MOODENG_INIT_SICKTIME     1
+#define MOODENG_INIT_SICKTIME     30
 #define MOODENG_INIT_SLEEPYTIME   480
 #define MOODENG_DIRTY_TIME        30
 #define MOODENG_HURT_TIME         30
@@ -39,7 +39,7 @@ void Moodeng_Init(Moodeng_t* moodeng) {
     moodeng->isSick = MOODENG_INIT_ISSICK;
     moodeng->healRate = MOODENG_INIT_HEALRATE;
     moodeng->discipline = MOODENG_INIT_DISCIPLINE;
-    moodeng->isTried = MOODENG_INIT_ISTIRED;
+    moodeng->isTired = MOODENG_INIT_ISTIRED;
     moodeng->evolution = MOODENG_INIT_EVOLUTION;
     moodeng->isAlive = MOODENG_INIT_ISALIVE;
     moodeng->emotion = MOODENG_INIT_EMOTION;
@@ -50,6 +50,8 @@ void Moodeng_Init(Moodeng_t* moodeng) {
     moodeng->nextHurtTime = -1;
     moodeng->nextDirtyTime = -1;
     moodeng->nextSleepyTime = MOODENG_INIT_SLEEPYTIME;
+    moodeng->sleepingTime = 0; //seconds
+    moodeng->isSleeping = false;
 }
 
 int Moodeng_GenerateRandomNumber(Moodeng_t* moodeng, int start, int end) {
@@ -105,8 +107,8 @@ void setDiscipline(Moodeng_t* moodeng, int value) {
         moodeng->discipline = value;
 }
 
-void setIsTried(Moodeng_t* moodeng, bool value) {
-    moodeng->isTried = value;
+void setisTired(Moodeng_t* moodeng, bool value) {
+    moodeng->isTired = value;
 }
 
 void setEvolution(Moodeng_t* moodeng, int value) {
@@ -123,7 +125,7 @@ float Moodeng_FeedingChance(Moodeng_t* moodeng) {
 }
 
 float Moodeng_SickChance(Moodeng_t* moodeng) {
-    return moodeng->weight * 0.15f + moodeng->poopCount * 0.1f + moodeng->isTried * 0.15f + (20.0f - moodeng->happy * 0.05f) + (20.0f - moodeng->hunger * 0.05f);
+    return moodeng->weight * 0.0015f + moodeng->poopCount * 0.1f + moodeng->isTired * 0.40f + (0.2f - moodeng->happy * 0.05f) + (0.2f - moodeng->hunger * 0.05f);
 }
 
 float Moodeng_PlayingChance(Moodeng_t* moodeng) {
@@ -195,6 +197,8 @@ static void Moodeng_HandleDecay(int* timer, int* stat, int minRand, int maxRand,
 }
 
 void Moodeng_Update(Moodeng_t* moodeng) {
+    //skip when sleep
+    if (moodeng->isSleeping) return;
     //poop
     if (moodeng->nextPoopTime == -1 && moodeng->poopRate > 0.0f) {
         moodeng->nextPoopTime = Moodeng_GenerateRandomNumber(moodeng, START_POOPTIME, END_POOPTIME);
@@ -236,6 +240,8 @@ void Moodeng_Update(Moodeng_t* moodeng) {
         if (moodeng->nextHurtTime == 0) {
             moodeng->happy--;
             moodeng->hunger--;
+            if(moodeng->happy < 0) moodeng->happy = 0;
+            if(moodeng->hunger < 0) moodeng->hunger = 0;
             //Sound Sick
             buzzer_play_sound(sound_sick);
             if(moodeng->isSick == true) moodeng->nextHurtTime = MOODENG_HURT_TIME;
@@ -253,10 +259,10 @@ void Moodeng_Update(Moodeng_t* moodeng) {
         }
     }
     //tired
-    if (moodeng->isTried == false && moodeng->nextSleepyTime > 0){
+    if (moodeng->isTired == false && moodeng->nextSleepyTime > 0){
         moodeng->nextSleepyTime--;
         if (moodeng->nextSleepyTime == 0){
-            moodeng->isTried = true;
+            moodeng->isTired = true;
             moodeng->nextSleepyTime = MOODENG_INIT_SLEEPYTIME;
         } 
     }
@@ -269,16 +275,15 @@ bool Moodeng_Minigame(Moodeng_t* moodeng, int guess){
     bool win = (guess == Moodeng_GenerateRandomNumber(moodeng, 0, 1));
     if (win){
         moodeng->happy += 2;
+        if(moodeng->happy > 4) moodeng->happy = 4;
     } 
     else {
         moodeng->happy++;
+        if(moodeng->happy > 4) moodeng->happy = 4;
     }
     moodeng->weight--;
+    if(moodeng->weight < 5) moodeng->weight = 5;
     return win;
-}
-
-void Moodeng_Sleep(Moodeng_t* moodeng){
-
 }
 
 void Moodeng_Heal(Moodeng_t* moodeng){
@@ -294,6 +299,7 @@ void Moodeng_Heal(Moodeng_t* moodeng){
     }
     else {
         moodeng->happy--;
+        if (moodeng->happy < 0) moodeng->happy = 0;
     }
 }
 
@@ -305,8 +311,8 @@ bool Moodeng_Check_Feed(Moodeng_t* moodeng){
     else if (moodeng->emotion == SILLY){
         return false;
     }
-    float randomProb = (float)Moodeng_GenerateRandomNumber(&moodeng, 0, 100) / 100.0f;
-    if (randomProb < Moodeng_FeedingChance(&moodeng)) {
+    float randomProb = (float)Moodeng_GenerateRandomNumber(moodeng, 0, 100) / 100.0f;
+    if (randomProb < Moodeng_FeedingChance(moodeng)) {
         return true;
     }
     else {
@@ -325,7 +331,7 @@ bool Moodeng_Check_Play(Moodeng_t* moodeng){
     }
 
     float randomProb = (float)Moodeng_GenerateRandomNumber(moodeng, 0, 100) / 100.0f;
-    if (randomProb < Moodeng_PlayingChance(&moodeng)) {
+    if (randomProb < Moodeng_PlayingChance(moodeng)) {
         return true;
     }
     else {

@@ -54,4 +54,5 @@ void UIManager_SetState(UIManager_t* ui, MenuState_t newState);
 void UIManager_Update(UIManager_t* ui, uint32_t currentTime);
 void UIManager_Draw(UIManager_t* ui);
 void UIManager_Display_text(UIManager_t* ui,bool shouldClear);
+
 #endif /* INC_UI_MANAGER_H_ */
