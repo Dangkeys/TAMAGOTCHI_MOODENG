@@ -12,6 +12,7 @@
 #include "ILI9341_GFX.h"
 #include "stdbool.h"
 #include "main.h"
+#include "moodeng.h"
 SpriteAnimator_t idleAnim;
 SpriteAnimator_t sleepAnimDay;
 SpriteAnimator_t sleepAnimNight;
@@ -29,6 +30,7 @@ SpriteAnimator_t sickAnim;
 SpriteAnimator_t stubbornAnim;
 extern ADC_HandleTypeDef hadc1;  // From main.c or auto-generated MX_ADC1_Init()
 extern UART_HandleTypeDef huart3;
+extern Moodeng_t moodeng;
 
 #define SCREEN_WIDTH  240
 #define SCREEN_HEIGHT 320
@@ -94,10 +96,15 @@ void UIManager_SetState(UIManager_t* ui, MenuState_t newState)
         case MENU_MEDICINE: ui->activeAnim = &medicineAnim; break;
         
         case MENU_SLEEP:
-            if (ui->isLightOn) ui->activeAnim = &sleepAnimDay;
-            else ui->activeAnim = &sleepAnimNight;
+            if(moodeng.isSleeping){
+                if (ui->isLightOn) ui->activeAnim = &sleepAnimDay;
+                else ui->activeAnim = &sleepAnimNight;
+            }
+            else {
+                ui->activeAnim = &idleAnim;
+            }
             break;
-        default:        ui->activeAnim = &idleAnim; break;
+        default:    ui->activeAnim = &idleAnim; break;
     }
 
     // ILI9341_Fill_Screen(BLACK);
