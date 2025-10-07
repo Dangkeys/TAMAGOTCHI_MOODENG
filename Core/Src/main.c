@@ -43,6 +43,7 @@
 #include "stm32f7xx_hal.h"
 #include "buzzer.h"
 #include <string.h>
+#include "sound.h"
 // #include "string.h"
 /* USER CODE END Includes */
 
@@ -86,8 +87,6 @@ typedef enum {
 } Food_t;
 Food_t foodSelected = MEAL;
 
-//Sound
-extern const int mario[2][52];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -271,7 +270,8 @@ int main(void)
     HAL_TIM_Base_Start_IT(&htim3);
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
     __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 500); //duty cycle 50% (loudest)
-    buzzer_play_sound(mario);
+//    buzzer_play_sound(mario);
+
 //    __HAL_TIM_SET_PRESCALER(&htim2, 53);
 
   //  if (HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buf, ADC_CH_COUNT) != HAL_OK) {
@@ -293,6 +293,7 @@ int main(void)
     //      shouldClearScreen = false;
     //      Display_Screen();
     //    }
+    // if (!buzzer.running){buzzer_play_sound(mario);}
 
     printStatus();
     HAL_Delay(100);
@@ -387,6 +388,8 @@ void Handle_Button_Yellow(void)
       case MENU_MAIN:
         //select action(menu)
         ui.selectedState = (ui.selectedState + 1) % 6;
+        //Sound Beep
+        buzzer_play_sound(sound_beep);
         //skip select main menu
         if (ui.selectedState == MENU_MAIN)
           ui.selectedState = MENU_FEED;
@@ -395,6 +398,8 @@ void Handle_Button_Yellow(void)
       case MENU_FEED:
         //select food
         foodSelected = (foodSelected == MEAL) ? SNACK : MEAL;
+        //Sound Beep
+        buzzer_play_sound(sound_beep);
         break;
 
       case MENU_PLAY:
@@ -402,9 +407,13 @@ void Handle_Button_Yellow(void)
         //return true if win
         if (Moodeng_Minigame(&moodeng, 0)) {
           ui.activeAnim = &miniGameCorrectAnim;
+          //Sound Win
+          buzzer_play_sound(sound_win);
         } 
         else {
           ui.activeAnim = &miniGameWrongAnim;
+          //Sound Lose
+          buzzer_play_sound(sound_lose);
         }
         break;
       
@@ -443,17 +452,23 @@ void Handle_Button_Red(void)
     else if (ui.menuState != MENU_MAIN) {
         UIManager_SetState(&ui, MENU_MAIN);
         shouldClearScreen = true;
+        //Sound Beep
+        buzzer_play_sound(sound_beep);
     } 
     //in main menu => scolding
     else {
       if (moodeng.emotion != SILLY) {
         moodeng.happy--;
         if(moodeng.happy < 0) moodeng.happy = 0;
+        //Sound Sad
+    	  buzzer_play_sound(sound_sad);
       }
       else {
         moodeng.discipline++;
         if(moodeng.discipline > 6) moodeng.discipline = 6;
         moodeng.emotion = SCOLDED;
+        //Sound Happy
+        buzzer_play_sound(sound_happy);
       }
     }
   }
@@ -474,17 +489,29 @@ void Handle_Button_Blue(void)
         if (Moodeng_Check_Feed(&moodeng))
             UIManager_SetState(&ui, ui.selectedState);
         else
-            ui.activeAnim = &stubbornAnim;
+        {
+        	ui.activeAnim = &stubbornAnim;
+        	//Sound stubborn
+        	buzzer_play_sound(sound_stubborn);
+        }
+
       } 
       //check if moodeng agree to playing (not if it goes silly)
       else if (ui.selectedState == MENU_PLAY) {
         if (Moodeng_Check_Play(&moodeng))
             UIManager_SetState(&ui, ui.selectedState);
         else
-            ui.activeAnim = &stubbornAnim;
+        {
+        	ui.activeAnim = &stubbornAnim;
+        	//Sound stubborn
+        	buzzer_play_sound(sound_stubborn);
+        }
+
       } 
       else {
         UIManager_SetState(&ui, ui.selectedState);
+        //Sound Beep
+        buzzer_play_sound(sound_beep);
       }
       shouldClearScreen = true;
       break;
@@ -496,6 +523,8 @@ void Handle_Button_Blue(void)
         moodeng.hunger += 2;
         moodeng.weight += 2;
         moodeng.poopRate += 0.4f;
+        //Sound Eat
+        buzzer_play_sound(sound_eat);
       } 
       //feed snack
       else {
@@ -503,6 +532,8 @@ void Handle_Button_Blue(void)
         moodeng.happy += 2;
         moodeng.weight += 4;
         moodeng.poopRate += 0.6f;
+        //Sound Eat
+        buzzer_play_sound(sound_eat);
       }
       if(moodeng.happy > 4) moodeng.happy = 4;
       if(moodeng.hunger > 4) moodeng.hunger = 4;
@@ -515,9 +546,13 @@ void Handle_Button_Blue(void)
       //return true if win
       if (Moodeng_Minigame(&moodeng, 1)) {
         ui.activeAnim = &miniGameCorrectAnim;
+        //Sound Win
+        buzzer_play_sound(sound_win);
       }
       else {
         ui.activeAnim = &miniGameWrongAnim;
+        //Sound Lose
+        buzzer_play_sound(sound_lose);
       }
       break;
 
