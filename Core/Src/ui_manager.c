@@ -11,6 +11,7 @@
 #include "ILI9341_GFX.h"
 #include "stdbool.h"
 #include "main.h"
+#include "moodeng.h"
 SpriteAnimator_t idleAnim;
 SpriteAnimator_t sleepAnimDay;
 SpriteAnimator_t sleepAnimNight;
@@ -29,6 +30,7 @@ SpriteAnimator_t stubbornAnim;
 SpriteAnimator_t selectStateAnim;
 extern ADC_HandleTypeDef hadc1; // From main.c or auto-generated MX_ADC1_Init()
 extern UART_HandleTypeDef huart3;
+extern Moodeng_t moodeng;
 
 #define SCREEN_WIDTH 240
 #define SCREEN_HEIGHT 320
@@ -89,30 +91,22 @@ void UIManager_SetState(UIManager_t *ui, MenuState_t newState)
 {
     ui->menuState = newState;
 
-    switch (newState)
-    {
-    case MENU_FEED:
-        ui->activeAnim = &feedMealAnim;
-        break;
-    case MENU_PLAY:
-        ui->activeAnim = &playGameAnim;
-        break;
-    case MENU_CLEAN:
-        ui->activeAnim = &cleanAnim;
-        break;
-    case MENU_MEDICINE:
-        ui->activeAnim = &medicineAnim;
-        break;
-
-    case MENU_SLEEP:
-        if (ui->isLightOn)
-            ui->activeAnim = &sleepAnimDay;
-        else
-            ui->activeAnim = &sleepAnimNight;
-        break;
-    default:
-        ui->activeAnim = &idleAnim;
-        break;
+    switch (newState) {
+        case MENU_FEED: ui->activeAnim = &feedMealAnim; break;
+        case MENU_PLAY: ui->activeAnim = &playGameAnim; break;
+        case MENU_CLEAN: ui->activeAnim = &cleanAnim; break;
+        case MENU_MEDICINE: ui->activeAnim = &medicineAnim; break;
+        
+        case MENU_SLEEP:
+            if(moodeng.isSleeping){
+                if (ui->isLightOn) ui->activeAnim = &sleepAnimDay;
+                else ui->activeAnim = &sleepAnimNight;
+            }
+            else {
+                ui->activeAnim = &idleAnim;
+            }
+            break;
+        default:        ui->activeAnim = &idleAnim; break;
     }
     ui->selectedStateAnim->x = SELECT_STATE_X_POS + ((ui->menuState - 1) * 48);
 }

@@ -1,8 +1,10 @@
 #include "timer.h"
 #include "moodeng.h"
+#include "ui_manager.h"
 #include <stdio.h>
 
 extern Moodeng_t moodeng;
+extern UIManager_t ui;
 
 void Timer_Init(Clock_t* gameClock) {
     gameClock->hour = 0;
@@ -12,13 +14,16 @@ void Timer_Init(Clock_t* gameClock) {
 
 void Timer_Update(Clock_t* gameClock) {
     gameClock->second++;
+    if (moodeng.isSleeping == true){
+        if (ui.isLightOn == false) moodeng.sleepingTime++;
+    }
 
     if (gameClock->second >= 60) {
         gameClock->second = 0;
         gameClock->minute++;
 
         Moodeng_Update(&moodeng);
-        checkEvolution(&moodeng, &gameClock);
+        checkEvolution(&moodeng, gameClock);
     }
 
     if (gameClock->minute >= 60) {
