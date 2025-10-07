@@ -210,7 +210,7 @@ void Moodeng_Update(Moodeng_t* moodeng) {
         if (moodeng->nextSickTime == 0) {
             float randomProb = (float)Moodeng_GenerateRandomNumber(moodeng, 0, 100) / 100.0f;
 
-            if (randomProb < Moodeng_SickChance(&moodeng)) {
+            if (randomProb < Moodeng_SickChance(moodeng)) {
                 moodeng->isSick = true;
                 moodeng->nextHurtTime = MOODENG_HURT_TIME;
             }
@@ -242,7 +242,7 @@ void Moodeng_Update(Moodeng_t* moodeng) {
         moodeng->nextSleepyTime--;
         if (moodeng->nextSleepyTime == 0){
             moodeng->isTried = true;
-            moodeng->nextDirtyTime = MOODENG_INIT_SLEEPYTIME;
+            moodeng->nextSleepyTime = MOODENG_INIT_SLEEPYTIME;
         } 
     }
     //Happy, Hunger
