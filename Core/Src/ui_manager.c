@@ -114,7 +114,7 @@ void UIManager_SetState(UIManager_t *ui, MenuState_t newState)
         ui->activeAnim = &idleAnim;
         break;
     }
-    ui->selectedStateAnim->x = SELECT_STATE_X_POS + ((ui->selectedState - 1) * 48);
+    ui->selectedStateAnim->x = SELECT_STATE_X_POS + ((ui->menuState - 1) * 48);
 }
 void UIManager_Update(UIManager_t *ui, uint32_t currentTime)
 {
@@ -178,7 +178,10 @@ void UIManager_Draw(UIManager_t *ui)
                                         BACKGROUND_COLOR);
         if (ui->selectedStateAnim->x > 0)
         {
-            SpriteAnimator_Draw(ui->selectedStateAnim);
+            if (ui->menuState != MENU_MAIN)
+            {
+                SpriteAnimator_Draw(ui->selectedStateAnim);
+            }
         }
     }
 
