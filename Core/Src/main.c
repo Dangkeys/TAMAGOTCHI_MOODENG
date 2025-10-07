@@ -433,6 +433,8 @@ void Handle_Button_Red(void)
       moodeng.isSleeping = false;
       if(moodeng.sleepingTime >= 1800){ //seconds
         moodeng.isTired = 0;
+        moodeng.happy++;
+        if(moodeng.happy > 4) moodeng.happy = 4;
         moodeng.nextSleepyTime = 480;
       }
       moodeng.sleepingTime = 0;
