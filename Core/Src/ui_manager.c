@@ -80,7 +80,7 @@ void UIManager_Init(UIManager_t *ui)
     SpriteAnimator_Init(&selectStateAnim, selectStateFrames, 1, SELECT_STATE_X_POS, 244, 18, 15, 300);
     SpriteAnimator_Init(&menuBarAnim, menuBarFrame, 1, 0, SCREEN_HEIGHT - 56, SCREEN_WIDTH, 56, 300);
     SpriteAnimator_Init(&heartAnim, heartFrames, 1, 5, 5, 40, 40, 300);
-    SpriteAnimator_Init(&hungerAnim, hungerFrames, 1, SCREEN_WIDTH-45, 5, 40, 40, 300);
+    SpriteAnimator_Init(&hungerAnim, hungerFrames, 1, SCREEN_WIDTH - 45, 5, 40, 40, 300);
 
     ui->menuState = MENU_MAIN;
     ui->activeAnim = &idleAnim;
@@ -97,24 +97,38 @@ void UIManager_SetState(UIManager_t *ui, MenuState_t newState)
 {
     ui->menuState = newState;
 
-    switch (newState) {
-        case MENU_FEED: ui->activeAnim = &feedMealAnim; break;
-        case MENU_PLAY: ui->activeAnim = &playGameAnim; break;
-        case MENU_CLEAN: ui->activeAnim = &cleanAnim; break;
-        case MENU_MEDICINE: ui->activeAnim = &medicineAnim; break;
-        
-        case MENU_SLEEP:
-            if(moodeng.isSleeping){
-                if (ui->isLightOn) ui->activeAnim = &sleepAnimDay;
-                else ui->activeAnim = &sleepAnimNight;
-            }
-            else {
-                ui->activeAnim = &idleAnim;
-            }
-            break;
-        default:        ui->activeAnim = &idleAnim; break;
+    switch (newState)
+    {
+    case MENU_FEED:
+        ui->activeAnim = &feedMealAnim;
+        break;
+    case MENU_PLAY:
+        ui->activeAnim = &playGameAnim;
+        break;
+    case MENU_CLEAN:
+        ui->activeAnim = &cleanAnim;
+        break;
+    case MENU_MEDICINE:
+        ui->activeAnim = &medicineAnim;
+        break;
+
+    case MENU_SLEEP:
+        if (moodeng.isSleeping)
+        {
+            if (ui->isLightOn)
+                ui->activeAnim = &sleepAnimDay;
+            else
+                ui->activeAnim = &sleepAnimNight;
+        }
+        else
+        {
+            ui->activeAnim = &idleAnim;
+        }
+        break;
+    default:
+        ui->activeAnim = &idleAnim;
+        break;
     }
-    ui->selectedStateAnim->x = SELECT_STATE_X_POS + ((ui->menuState - 1) * 48);
 }
 void UIManager_Update(UIManager_t *ui, uint32_t currentTime)
 {
@@ -172,31 +186,30 @@ void UIManager_Draw(UIManager_t *ui)
     }
     if (ui->selectedStateAnim != NULL)
     {
-            ILI9341_Draw_Filled_Rectangle_Coord(0, 244,
-                                        SCREEN_WIDTH,
-                                        244+15,
-                                        BACKGROUND_COLOR);
+        ILI9341_Draw_Filled_Rectangle_Coord(0, 244,
+                                            SCREEN_WIDTH,
+                                            244 + 15,
+                                            BACKGROUND_COLOR);
         if (ui->selectedStateAnim->x > 0)
         {
-            if (ui->menuState != MENU_MAIN)
-            {
-                SpriteAnimator_Draw(ui->selectedStateAnim);
-            }
+            if (ui->menuState == MENU_MAIN && ui->selectedState == MENU_MAIN)
+                return;
+            SpriteAnimator_Draw(ui->selectedStateAnim);
         }
     }
     if (ui->heartAnim != NULL)
     {
         // Debug: Draw a red rectangle where heart should be
-        // ILI9341_Draw_Filled_Rectangle_Coord(ui->heartAnim->x, ui->heartAnim->y, 
-        //                                    ui->heartAnim->x + ui->heartAnim->w, 
+        // ILI9341_Draw_Filled_Rectangle_Coord(ui->heartAnim->x, ui->heartAnim->y,
+        //                                    ui->heartAnim->x + ui->heartAnim->w,
         //                                    ui->heartAnim->y + ui->heartAnim->h, RED);
         SpriteAnimator_Draw(ui->heartAnim);
     }
-    if(ui->hungerAnim != NULL)
+    if (ui->hungerAnim != NULL)
     {
         // Debug: Draw a blue rectangle where hunger should be
-        // ILI9341_Draw_Filled_Rectangle_Coord(ui->hungerAnim->x, ui->hungerAnim->y, 
-        //                                    ui->hungerAnim->x + ui->hungerAnim->w, 
+        // ILI9341_Draw_Filled_Rectangle_Coord(ui->hungerAnim->x, ui->hungerAnim->y,
+        //                                    ui->hungerAnim->x + ui->hungerAnim->w,
         //                                    ui->hungerAnim->y + ui->hungerAnim->h, BLUE);
         SpriteAnimator_Draw(ui->hungerAnim);
     }
@@ -206,6 +219,8 @@ void UIManager_Draw(UIManager_t *ui)
     //    ILI9341_Draw_Text("HP:10", 5, 5, WHITE, 1, BLACK);
     //    ILI9341_Draw_Text("Mood:10", 5, 20, WHITE, 1, BLACK);
 }
+
+void UIManager_Display_Moodeng_Status(UIManager_t);
 
 // void UIManager_Display_text(UIManager_t *ui, bool shouldClear)
 // {
