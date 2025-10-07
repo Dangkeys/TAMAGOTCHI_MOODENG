@@ -27,7 +27,7 @@ typedef struct {
     bool isSick;
     float healRate;    // 0.0 - 1.0
     int discipline;    // 0-5
-    bool isTried;
+    bool isTired;
     int evolution;     // 0-2
     bool isAlive;
     Emotion_t emotion;
@@ -38,6 +38,8 @@ typedef struct {
     int nextHurtTime;
     int nextDirtyTime;
     int nextSleepyTime;
+    int sleepingTime; //seconds
+    bool isSleeping;
 } Moodeng_t;
 
 void Moodeng_Init(Moodeng_t* moodeng);
@@ -50,7 +52,7 @@ void Moodeng_SetPoopRate(Moodeng_t* moodeng, float value);
 void Moodeng_SetIsSick(Moodeng_t* moodeng, bool value);
 void Moodeng_SetHealRate(Moodeng_t* moodeng, float value);
 void Moodeng_SetDiscipline(Moodeng_t* moodeng, int value);
-void Moodeng_SetIsTried(Moodeng_t* moodeng, bool value);
+void Moodeng_SetisTired(Moodeng_t* moodeng, bool value);
 void Moodeng_SetEvolution(Moodeng_t* moodeng, int value);
 void Moodeng_SetIsAlive(Moodeng_t* moodeng, bool value);
 void Moodeng_SetEmotion(Moodeng_t* moodeng, Emotion_t value);
@@ -61,7 +63,6 @@ static void Moodeng_HandleDecay(int* timer, int* stat, int minRand, int maxRand,
 void checkEvolution(Moodeng_t* moodeng, Clock_t* gameClock);
 void Moodeng_Update(Moodeng_t* moodeng);
 bool Moodeng_Minigame(Moodeng_t* moodeng, int guess);
-void Moodeng_Sleep(Moodeng_t* moodeng);
 void Moodeng_Heal(Moodeng_t* moodeng);
 bool Moodeng_Check_Feed(Moodeng_t* moodeng);
 bool Moodeng_Check_Play(Moodeng_t* moodeng);

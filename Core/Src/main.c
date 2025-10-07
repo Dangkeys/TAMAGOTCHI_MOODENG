@@ -43,6 +43,7 @@
 #include "stm32f7xx_hal.h"
 #include "buzzer.h"
 #include <string.h>
+#include "sound.h"
 // #include "string.h"
 /* USER CODE END Includes */
 
@@ -86,8 +87,6 @@ typedef enum {
 } Food_t;
 Food_t foodSelected = MEAL;
 
-//Sound
-extern const int mario[2][52];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -99,69 +98,81 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void printStatus(void)
 {
-    char msg[512];
-    int n = snprintf(msg, sizeof(msg),
-        "Time: %02d:%02d:%02d\r\n"
-        "Happy: %d\r\n"
-        "Weight: %d\r\n"
-        "Hunger: %d\r\n"
-        "PoopCount: %d\r\n"
-        "PoopRate: %.2f\r\n"
-        "isSick: %d\r\n"
-        "HealRate: %.2f\r\n"
-        "Discipline: %d\r\n"
-        "isTried: %d\r\n"
-        "Evolution: %d\r\n"
-        "isAlive: %d\r\n"
-        "nextDecayHappy: %d\r\n"
-        "nextDecayHunger: %d\r\n"
-        "nextPoopTime: %d\r\n"
-        "nextSickTime: %d\r\n"
-        "nextHurtTime: %d\r\n"
-        "nextDirtyTime: %d\r\n"
-        "nextSleepyTime: %d\r\n"
-        "--------------------------\r\n",
-        gameClock.hour, gameClock.minute, gameClock.second,
-        moodeng.happy,
-        moodeng.weight,
-        moodeng.hunger,
-        moodeng.poopCount,
-        moodeng.poopRate,
-        moodeng.isSick,
-        moodeng.healRate,
-        moodeng.discipline,
-        moodeng.isTried,
-        moodeng.evolution,
-        moodeng.isAlive,
-        moodeng.nextDecayHappy,
-        moodeng.nextDecayHunger,
-        moodeng.nextPoopTime,
-        moodeng.nextSickTime,
-        moodeng.nextHurtTime,
-        moodeng.nextDirtyTime,
-        moodeng.nextSleepyTime
-    );
+  const char* emotionStr;
+  switch (moodeng.emotion) {
+    case NORMAL:
+      emotionStr = "NORMAL";
+      break;
+    case SILLY:
+      emotionStr = "SILLY";
+      break;
+    case SCOLDED:
+      emotionStr = "SCOLDED";
+      break;
+    default:
+      emotionStr = "UNKNOWN";
+      break;
+  }
 
-    if (n > 0)
-    {
-        HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
-    }
+  char msg[512];
+  int n = snprintf(msg, sizeof(msg),
+    "Time: %02d:%02d:%02d\r\n"
+    "Happy: %d\r\n"
+    "Weight: %d\r\n"
+    "Hunger: %d\r\n"
+    "PoopCount: %d\r\n"
+    "PoopRate: %.2f\r\n"
+    "isSick: %d\r\n"
+    "HealRate: %.2f\r\n"
+    "Discipline: %d\r\n"
+    "isTired: %d\r\n"
+    "Evolution: %d\r\n"
+    "isAlive: %d\r\n"
+    "Emotion: %s\r\n"
+    "nextDecayHappy: %d\r\n"
+    "nextDecayHunger: %d\r\n"
+    "nextPoopTime: %d\r\n"
+    "nextSickTime: %d\r\n"
+    "nextHurtTime: %d\r\n"
+    "nextDirtyTime: %d\r\n"
+    "nextSleepyTime: %d\r\n"
+    "sleepingTime: %d\r\n"
+    "isSleeping: %d\r\n"
+    "--------------------------\r\n",
+    gameClock.hour, gameClock.minute, gameClock.second,
+    moodeng.happy,
+    moodeng.weight,
+    moodeng.hunger,
+    moodeng.poopCount,
+    moodeng.poopRate,
+    moodeng.isSick,
+    moodeng.healRate,
+    moodeng.discipline,
+    moodeng.isTired,
+    moodeng.evolution,
+    moodeng.isAlive,
+    emotionStr,
+    moodeng.nextDecayHappy,
+    moodeng.nextDecayHunger,
+    moodeng.nextPoopTime,
+    moodeng.nextSickTime,
+    moodeng.nextHurtTime,
+    moodeng.nextDirtyTime,
+    moodeng.nextSleepyTime,
+    moodeng.sleepingTime,
+    moodeng.isSleeping
+  );
+
+  if (n > 0)
+  {
+    HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
+  }
 }
 
 void printValue(int value)
 {
     char msg[32];
     int n = snprintf(msg, sizeof(msg), "Value: %02d\r\n", value);
-    if (n > 0)
-    {
-        HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
-    }
-}
-
-void printTime(Clock_t *gameClock)
-{
-    char msg[32];
-    int n = snprintf(msg, sizeof(msg), "%02d:%02d:%02d\r", gameClock->hour, gameClock->minute, gameClock->second);
     if (n > 0)
     {
         HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
@@ -281,6 +292,7 @@ int main(void)
     //      shouldClearScreen = false;
     //      Display_Screen();
     //    }
+    // if (!buzzer.running){buzzer_play_sound(mario);}
 
     printStatus();
     HAL_Delay(100);
@@ -375,6 +387,8 @@ void Handle_Button_Yellow(void)
       case MENU_MAIN:
         //select action(menu)
         ui.selectedState = (ui.selectedState + 1) % 6;
+        //Sound Beep
+        buzzer_play_sound(sound_beep);
         //skip select main menu
         if (ui.selectedState == MENU_MAIN)
           ui.selectedState = MENU_FEED;
@@ -383,6 +397,8 @@ void Handle_Button_Yellow(void)
       case MENU_FEED:
         //select food
         foodSelected = (foodSelected == MEAL) ? SNACK : MEAL;
+        //Sound Beep
+        buzzer_play_sound(sound_beep);
         break;
 
       case MENU_PLAY:
@@ -390,9 +406,21 @@ void Handle_Button_Yellow(void)
         //return true if win
         if (Moodeng_Minigame(&moodeng, 0)) {
           ui.activeAnim = &miniGameCorrectAnim;
+          //Sound Win
+          buzzer_play_sound(sound_win);
         } 
         else {
           ui.activeAnim = &miniGameWrongAnim;
+          //Sound Lose
+          buzzer_play_sound(sound_lose);
+        }
+        break;
+      
+      case MENU_SLEEP:
+        //isSleeping = confirm
+        if (moodeng.isSleeping == false) {
+          moodeng.sleepingTime = 0;
+          moodeng.isSleeping = true;
         }
         break;
 
@@ -408,17 +436,38 @@ void Handle_Button_Red(void)
     uint32_t now = HAL_GetTick();
     if (now - lastTick < 200) return;
     lastTick = now;
+    //exit sleeping
+    if (ui.menuState == MENU_SLEEP && moodeng.isSleeping == true){
+      moodeng.isSleeping = false;
+      if(moodeng.sleepingTime >= 1800){ //seconds
+        moodeng.isTired = 0;
+        moodeng.happy++;
+        if(moodeng.happy > 4) moodeng.happy = 4;
+        moodeng.nextSleepyTime = 480;
+      }
+      moodeng.sleepingTime = 0;
+    }
     //back to main menu
-    if (ui.menuState != MENU_MAIN) {
+    else if (ui.menuState != MENU_MAIN) {
         UIManager_SetState(&ui, MENU_MAIN);
         shouldClearScreen = true;
+        //Sound Beep
+        buzzer_play_sound(sound_beep);
     } 
     //in main menu => scolding
     else {
-      if (moodeng.emotion != SILLY) moodeng.happy--;
+      if (moodeng.emotion != SILLY) {
+        moodeng.happy--;
+        if(moodeng.happy < 0) moodeng.happy = 0;
+        //Sound Sad
+    	  buzzer_play_sound(sound_sad);
+      }
       else {
         moodeng.discipline++;
+        if(moodeng.discipline > 6) moodeng.discipline = 6;
         moodeng.emotion = SCOLDED;
+        //Sound Happy
+        buzzer_play_sound(sound_happy);
       }
     }
   }
@@ -439,28 +488,42 @@ void Handle_Button_Blue(void)
         if (Moodeng_Check_Feed(&moodeng))
             UIManager_SetState(&ui, ui.selectedState);
         else
-            ui.activeAnim = &stubbornAnim;
+        {
+        	ui.activeAnim = &stubbornAnim;
+        	//Sound stubborn
+        	buzzer_play_sound(sound_stubborn);
+        }
+
       } 
       //check if moodeng agree to playing (not if it goes silly)
       else if (ui.selectedState == MENU_PLAY) {
         if (Moodeng_Check_Play(&moodeng))
             UIManager_SetState(&ui, ui.selectedState);
         else
-            ui.activeAnim = &stubbornAnim;
+        {
+        	ui.activeAnim = &stubbornAnim;
+        	//Sound stubborn
+        	buzzer_play_sound(sound_stubborn);
+        }
+
       } 
       else {
         UIManager_SetState(&ui, ui.selectedState);
+        //Sound Beep
+        buzzer_play_sound(sound_beep);
       }
       shouldClearScreen = true;
       break;
 
-    case MENU_FEED:
+    case MENU_FEED: 
       //feed meal
       if (foodSelected == MEAL) {
         ui.activeAnim = &feedMealAnim;
         moodeng.hunger += 2;
         moodeng.weight += 2;
         moodeng.poopRate += 0.4f;
+        //Sound Eat
+        buzzer_play_sound(sound_eat);
       } 
       //feed snack
       else {
@@ -468,7 +531,13 @@ void Handle_Button_Blue(void)
         moodeng.happy += 2;
         moodeng.weight += 4;
         moodeng.poopRate += 0.6f;
+        //Sound Eat
+        buzzer_play_sound(sound_eat);
       }
+      if(moodeng.happy > 4) moodeng.happy = 4;
+      if(moodeng.hunger > 4) moodeng.hunger = 4;
+      if(moodeng.weight > 99) moodeng.weight = 99;
+      if(moodeng.poopRate > 1.0f) moodeng.poopRate = 1.0f;
       break;
 
     case MENU_PLAY:
@@ -476,9 +545,13 @@ void Handle_Button_Blue(void)
       //return true if win
       if (Moodeng_Minigame(&moodeng, 1)) {
         ui.activeAnim = &miniGameCorrectAnim;
+        //Sound Win
+        buzzer_play_sound(sound_win);
       }
       else {
         ui.activeAnim = &miniGameWrongAnim;
+        //Sound Lose
+        buzzer_play_sound(sound_lose);
       }
       break;
 
