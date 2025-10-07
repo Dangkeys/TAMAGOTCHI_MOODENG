@@ -1,0 +1,3 @@
+../Core/Src/buzzer.c:12:5:calculate_pres	16	static
+../Core/Src/buzzer.c:19:6:buzzer_set_freq	24	static
+../Core/Src/buzzer.c:30:6:buzzer_play_sound_impl	24	static

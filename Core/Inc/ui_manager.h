@@ -13,6 +13,22 @@
 #include "stdbool.h"
 #include "main.h"
 
+extern SpriteAnimator_t idleAnim;
+extern SpriteAnimator_t sleepAnimDay;
+extern SpriteAnimator_t sleepAnimNight;
+extern SpriteAnimator_t menuBarAnim;
+extern SpriteAnimator_t feedSnackAnim;
+extern SpriteAnimator_t feedMealAnim;
+extern SpriteAnimator_t playGameAnim;
+extern SpriteAnimator_t medicineAnim;
+extern SpriteAnimator_t cleanAnim;
+extern SpriteAnimator_t winAnim;
+extern SpriteAnimator_t loseAnim;
+extern SpriteAnimator_t miniGameCorrectAnim;
+extern SpriteAnimator_t miniGameWrongAnim;
+extern SpriteAnimator_t sickAnim;
+extern SpriteAnimator_t stubbornAnim;
+
 typedef enum {
     MENU_MAIN = 0,
     MENU_FEED,

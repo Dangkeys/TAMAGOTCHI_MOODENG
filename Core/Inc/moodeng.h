@@ -6,6 +6,7 @@
  */
 
 #include <stdbool.h>
+#include "timer.h"
 #include "rng.h"
 
 #ifndef INC_MOODENG_H_
@@ -53,8 +54,16 @@ void Moodeng_SetIsTried(Moodeng_t* moodeng, bool value);
 void Moodeng_SetEvolution(Moodeng_t* moodeng, int value);
 void Moodeng_SetIsAlive(Moodeng_t* moodeng, bool value);
 void Moodeng_SetEmotion(Moodeng_t* moodeng, Emotion_t value);
-float Moodeng_FeedingChange(Moodeng_t* moodeng);
-float Moodeng_SickChange(Moodeng_t* moodeng);
-float Moodeng_PlayingChange(Moodeng_t* moodeng);
+float Moodeng_FeedingChance(Moodeng_t* moodeng);
+float Moodeng_SickChance(Moodeng_t* moodeng);
+float Moodeng_PlayingChance(Moodeng_t* moodeng);
+static void Moodeng_HandleDecay(int* timer, int* stat, int minRand, int maxRand, Moodeng_t* moodeng);
+void checkEvolution(Moodeng_t* moodeng, Clock_t* gameClock);
+void Moodeng_Update(Moodeng_t* moodeng);
+bool Moodeng_Minigame(Moodeng_t* moodeng, int guess);
+void Moodeng_Sleep(Moodeng_t* moodeng);
+void Moodeng_Heal(Moodeng_t* moodeng);
+bool Moodeng_Check_Feed(Moodeng_t* moodeng);
+bool Moodeng_Check_Play(Moodeng_t* moodeng);
 
 #endif /* INC_MOODENG_H_ */
