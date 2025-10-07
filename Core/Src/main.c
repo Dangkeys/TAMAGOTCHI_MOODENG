@@ -61,9 +61,7 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-// PetState_t currentState = STATE_IDLE_STATUS;
 bool shouldClearScreen = false;
-// PetState_t selectNextState = STATE_IDLE_STATUS;
 
 // const char* stateNames[STATE_COUNT] = {
 //     "Idle",

@@ -44,8 +44,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-//extern PetState_t currentState;
-//extern PetState_t selectNextState;
+
 extern bool shouldClearScreen;
 
 extern UIManager_t ui;
@@ -104,6 +103,7 @@ void EXTI0_IRQHandler(void)
   switch(ui.menuState) {
       case MENU_MAIN:
         ui.selectedState = (ui.selectedState + 1) % 6;
+        break;
       case MENU_FEED:
       case MENU_PLAY:
       case MENU_SLEEP:
