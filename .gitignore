@@ -1,0 +1,50 @@
+# Build artifacts
+build/
+Debug/
+Release/
+*.elf
+*.hex
+*.bin
+*.map
+*.o
+*.d
+*.su
+
+# STM32CubeIDE specific files
+.project
+.cproject
+.settings/
+.mxproject
+.metadata/
+
+# Keil MDK-ARM specific files (if applicable)
+RTE/
+Objects/
+Listings/
+*.uvoptx
+*.uvprojx
+*.bak
+*.sct
+*.dep
+
+# IAR Embedded Workbench specific files (if applicable)
+settings/
+EWARM/
+*.ewd
+*.ewp
+*.eww
+
+# Generated files
+Core/Src/stm32fxxx_hal_msp.c
+Core/Src/stm32fxxx_it.c
+Core/Inc/main.h
+Core/Src/main.c
+Drivers/
+Middlewares/
+
+# Other common ignored files
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+*.bak
