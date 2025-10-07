@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "rng.h"
 #include "ui_manager.h"
-extern UIManager_t ui
+extern UIManager_t ui;
 
 // Default starting stats (easier tuning)
 #define MOODENG_INIT_HAPPY        2
@@ -159,7 +159,7 @@ void checkEvolution(Moodeng_t* moodeng, Clock_t* gameClock) {
 
         case 3:
             if (moodeng->happy == 6) {
-                ui.activeAnim = &winAnim
+                ui.activeAnim = &winAnim;
             }
             break;
 
@@ -251,7 +251,7 @@ void Moodeng_Update(Moodeng_t* moodeng) {
 }
 
 bool Moodeng_Minigame(Moodeng_t* moodeng, int guess){
-    bool win = (guess == Moodeng_GenerateRandomNumber(moodeng, 0, 1);)
+    bool win = (guess == Moodeng_GenerateRandomNumber(moodeng, 0, 1));
     if (win){
         moodeng->happy += 2;
     } 
