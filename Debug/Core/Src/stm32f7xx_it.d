@@ -36,7 +36,7 @@ Core/Src/stm32f7xx_it.o: ../Core/Src/stm32f7xx_it.c ../Core/Inc/main.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h \
  ../Core/Inc/stm32f7xx_it.h ../Core/Inc/ui_manager.h \
  ../Core/Inc/sprite_animator.h \
- C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h
+ C:/Users/coppe/OneDrive/Documents/GitHub/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h:
 ../Core/Inc/stm32f7xx_hal_conf.h:
@@ -76,4 +76,4 @@ Core/Src/stm32f7xx_it.o: ../Core/Src/stm32f7xx_it.c ../Core/Inc/main.h \
 ../Core/Inc/stm32f7xx_it.h:
 ../Core/Inc/ui_manager.h:
 ../Core/Inc/sprite_animator.h:
-C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h:
+C:/Users/coppe/OneDrive/Documents/GitHub/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h:
