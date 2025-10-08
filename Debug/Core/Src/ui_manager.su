@@ -1,4 +1,4 @@
-../Core/Src/ui_manager.c:24:6:UIManager_Init	32	static
-../Core/Src/ui_manager.c:45:6:UIManager_SetState	16	static
-../Core/Src/ui_manager.c:61:6:UIManager_Update	160	static
-../Core/Src/ui_manager.c:99:6:UIManager_Draw	24	static
+../Core/Src/ui_manager.c:38:6:UIManager_Init	32	static
+../Core/Src/ui_manager.c:94:6:UIManager_SetState	16	static
+../Core/Src/ui_manager.c:125:6:UIManager_Update	160	static
+../Core/Src/ui_manager.c:167:6:UIManager_Draw	24	static

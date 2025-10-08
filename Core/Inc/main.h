@@ -37,15 +37,10 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-typedef enum {
-    STATE_IDLE_STATUS = 0,
-    STATE_MEAL,
-    STATE_MINI_GAME,
-    STATE_SLEEP,
-    STATE_CLEANUP,
-    STATE_MEDICINE
-} PetState_t;
+
 #define STATE_COUNT 6
+#define BACKGROUND_COLOR DARKGREY
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
