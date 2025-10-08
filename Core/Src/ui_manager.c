@@ -12,6 +12,7 @@
 #include "stdbool.h"
 #include "main.h"
 #include "moodeng.h"
+#include <stdio.h>
 SpriteAnimator_t idleAnim;
 SpriteAnimator_t sleepAnimDay;
 SpriteAnimator_t sleepAnimNight;
@@ -80,7 +81,7 @@ void UIManager_Init(UIManager_t *ui)
     SpriteAnimator_Init(&selectStateAnim, selectStateFrames, 1, SELECT_STATE_X_POS, 244, 18, 15, 300);
     SpriteAnimator_Init(&menuBarAnim, menuBarFrame, 1, 0, SCREEN_HEIGHT - 56, SCREEN_WIDTH, 56, 300);
     SpriteAnimator_Init(&heartAnim, heartFrames, 1, 5, 5, 40, 40, 300);
-    SpriteAnimator_Init(&hungerAnim, hungerFrames, 1, SCREEN_WIDTH-45, 5, 40, 40, 300);
+    SpriteAnimator_Init(&hungerAnim, hungerFrames, 1, SCREEN_WIDTH - 45, 5, 40, 40, 300);
 
     ui->menuState = MENU_MAIN;
     ui->activeAnim = &idleAnim;
@@ -97,24 +98,39 @@ void UIManager_SetState(UIManager_t *ui, MenuState_t newState)
 {
     ui->menuState = newState;
 
-    switch (newState) {
-        case MENU_FEED: ui->activeAnim = &feedMealAnim; break;
-        case MENU_PLAY: ui->activeAnim = &playGameAnim; break;
-        case MENU_CLEAN: ui->activeAnim = &cleanAnim; break;
-        case MENU_MEDICINE: ui->activeAnim = &medicineAnim; break;
-        
-        case MENU_SLEEP:
-            if(moodeng.isSleeping){
-                if (ui->isLightOn) ui->activeAnim = &sleepAnimDay;
-                else ui->activeAnim = &sleepAnimNight;
-            }
-            else {
-                ui->activeAnim = &idleAnim;
-            }
-            break;
-        default:        ui->activeAnim = &idleAnim; break;
+    switch (newState)
+    {
+    case MENU_FEED:
+        ui->activeAnim = &feedMealAnim;
+        break;
+    case MENU_PLAY:
+        ui->activeAnim = &playGameAnim;
+        break;
+    case MENU_CLEAN:
+        ui->activeAnim = &cleanAnim;
+        break;
+    case MENU_MEDICINE:
+        ui->activeAnim = &medicineAnim;
+        break;
+
+    case MENU_SLEEP:
+        if (moodeng.isSleeping)
+        {
+            if (ui->isLightOn)
+                ui->activeAnim = &sleepAnimDay;
+            else
+                ui->activeAnim = &sleepAnimNight;
+        }
+        else
+        {
+            ui->activeAnim = &idleAnim;
+        }
+        break;
+    default:
+        ui->activeAnim = &idleAnim;
+        ui->selectedStateAnim->x = -24;
+        break;
     }
-    ui->selectedStateAnim->x = SELECT_STATE_X_POS + ((ui->menuState - 1) * 48);
 }
 void UIManager_Update(UIManager_t *ui, uint32_t currentTime)
 {
@@ -172,93 +188,30 @@ void UIManager_Draw(UIManager_t *ui)
     }
     if (ui->selectedStateAnim != NULL)
     {
-            ILI9341_Draw_Filled_Rectangle_Coord(0, 244,
-                                        SCREEN_WIDTH,
-                                        244+15,
-                                        BACKGROUND_COLOR);
+        ILI9341_Draw_Filled_Rectangle_Coord(0, 244,
+                                            SCREEN_WIDTH,
+                                            244 + 15,
+                                            BACKGROUND_COLOR); // clear previous
         if (ui->selectedStateAnim->x > 0)
         {
-            if (ui->menuState != MENU_MAIN)
-            {
-                SpriteAnimator_Draw(ui->selectedStateAnim);
-            }
+            SpriteAnimator_Draw(ui->selectedStateAnim);
         }
     }
     if (ui->heartAnim != NULL)
     {
-        // Debug: Draw a red rectangle where heart should be
-        // ILI9341_Draw_Filled_Rectangle_Coord(ui->heartAnim->x, ui->heartAnim->y, 
-        //                                    ui->heartAnim->x + ui->heartAnim->w, 
-        //                                    ui->heartAnim->y + ui->heartAnim->h, RED);
         SpriteAnimator_Draw(ui->heartAnim);
+        char happyText[8];
+        snprintf(happyText, sizeof(happyText), "%d", moodeng.happy);
+        ILI9341_Draw_Text(happyText, ui->heartAnim->x + ui->heartAnim->w + 2,
+                          ui->heartAnim->y + 12, WHITE, 2, BACKGROUND_COLOR);
     }
-    if(ui->hungerAnim != NULL)
+    if (ui->hungerAnim != NULL)
     {
-        // Debug: Draw a blue rectangle where hunger should be
-        // ILI9341_Draw_Filled_Rectangle_Coord(ui->hungerAnim->x, ui->hungerAnim->y, 
-        //                                    ui->hungerAnim->x + ui->hungerAnim->w, 
-        //                                    ui->hungerAnim->y + ui->hungerAnim->h, BLUE);
         SpriteAnimator_Draw(ui->hungerAnim);
+
+        char hungerText[8];
+        snprintf(hungerText, sizeof(hungerText), "%d", moodeng.hunger);
+        ILI9341_Draw_Text(hungerText, ui->hungerAnim->x - 20,
+                          ui->hungerAnim->y + 12, WHITE, 2, BACKGROUND_COLOR);
     }
-
-    // UIManager_Display_text(ui, false);
-    // Optional: Draw UI icons or stats
-    //    ILI9341_Draw_Text("HP:10", 5, 5, WHITE, 1, BLACK);
-    //    ILI9341_Draw_Text("Mood:10", 5, 20, WHITE, 1, BLACK);
 }
-
-// void UIManager_Display_text(UIManager_t *ui, bool shouldClear)
-// {
-//     ILI9341_Draw_Text("Current:", 5, 10, WHITE, 2, BACKGROUND_COLOR);
-//     switch (ui->menuState)
-//     {
-//     case MENU_MAIN:
-//         ILI9341_Draw_Text("Main", 120, 10, YELLOW, 2, BACKGROUND_COLOR);
-//         break;
-//     case MENU_FEED:
-//         ILI9341_Draw_Text("Feed", 120, 10, YELLOW, 2, BACKGROUND_COLOR);
-//         break;
-//     case MENU_PLAY:
-//         ILI9341_Draw_Text("Play", 120, 10, YELLOW, 2, BACKGROUND_COLOR);
-//         break;
-//     case MENU_SLEEP:
-//         ILI9341_Draw_Text("Sleep", 120, 10, YELLOW, 2, BACKGROUND_COLOR);
-//         break;
-//     case MENU_CLEAN:
-//         ILI9341_Draw_Text("Clean", 120, 10, YELLOW, 2, BACKGROUND_COLOR);
-//         break;
-//     case MENU_MEDICINE:
-//         ILI9341_Draw_Text("Medicine", 120, 10, YELLOW, 2, BACKGROUND_COLOR);
-//         break;
-//     default:
-//         ILI9341_Draw_Text("Unknown", 120, 10, RED, 2, BACKGROUND_COLOR);
-//         break;
-//     }
-
-//     // Show selected (highlighted but not confirmed yet)
-//     ILI9341_Draw_Text("Selected:", 5, 40, WHITE, 2, BACKGROUND_COLOR);
-//     switch (ui->selectedState)
-//     {
-//     case MENU_MAIN:
-//         ILI9341_Draw_Text("Main", 120, 40, CYAN, 2, BACKGROUND_COLOR);
-//         break;
-//     case MENU_FEED:
-//         ILI9341_Draw_Text("Feed", 120, 40, CYAN, 2, BACKGROUND_COLOR);
-//         break;
-//     case MENU_PLAY:
-//         ILI9341_Draw_Text("Play", 120, 40, CYAN, 2, BACKGROUND_COLOR);
-//         break;
-//     case MENU_SLEEP:
-//         ILI9341_Draw_Text("Sleep", 120, 40, CYAN, 2, BACKGROUND_COLOR);
-//         break;
-//     case MENU_CLEAN:
-//         ILI9341_Draw_Text("Clean", 120, 40, CYAN, 2, BACKGROUND_COLOR);
-//         break;
-//     case MENU_MEDICINE:
-//         ILI9341_Draw_Text("Medicine", 120, 40, CYAN, 2, BACKGROUND_COLOR);
-//         break;
-//     default:
-//         ILI9341_Draw_Text("Unknown", 120, 40, RED, 2, BACKGROUND_COLOR);
-//         break;
-//     }
-// }
