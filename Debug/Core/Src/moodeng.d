@@ -37,7 +37,7 @@ Core/Src/moodeng.o: ../Core/Src/moodeng.c ../Core/Inc/moodeng.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h \
  ../Core/Inc/rng.h ../Core/Inc/ui_manager.h ../Core/Inc/sprite_animator.h \
  C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h \
- ../Core/Inc/buzzer.h ../Core/Inc/sound.h
+ ../Core/Inc/buzzer.h ../Core/Inc/sound.h ../Core/Inc/flash.h
 ../Core/Inc/moodeng.h:
 ../Core/Inc/timer.h:
 ../Core/Inc/rng.h:
@@ -83,3 +83,4 @@ Core/Src/moodeng.o: ../Core/Src/moodeng.c ../Core/Inc/moodeng.h \
 C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h:
 ../Core/Inc/buzzer.h:
 ../Core/Inc/sound.h:
+../Core/Inc/flash.h:
