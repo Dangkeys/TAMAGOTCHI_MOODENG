@@ -200,7 +200,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         Moodeng_Reset(&moodeng);
         break;
 
-
     default:
         break;
     }
@@ -257,7 +256,6 @@ int main(void)
     MX_ADC1_Init();
     MX_TIM2_Init();
     MX_TIM3_Init();
-
     /* USER CODE BEGIN 2 */
     Moodeng_Init(&moodeng);
     Timer_Init(&gameClock);
@@ -318,11 +316,10 @@ int main(void)
             ILI9341_Draw_Text("Medicine", 120, 40, DARKGREY, 2, DARKGREY);
             shouldClearScreen = false;
         }
-
-        /* USER CODE END 3 */
     }
     /* USER CODE END 3 */
 }
+
 /**
  * @brief System Clock Configuration
  * @retval None
