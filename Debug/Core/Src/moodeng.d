@@ -35,7 +35,7 @@ Core/Src/moodeng.o: ../Core/Src/moodeng.c ../Core/Inc/moodeng.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h \
- ../Core/Inc/rng.h
+ ../Core/Inc/rng.h ../Core/Inc/flash.h
 ../Core/Inc/moodeng.h:
 ../Core/Inc/rng.h:
 ../Core/Inc/main.h:
@@ -75,3 +75,4 @@ Core/Src/moodeng.o: ../Core/Src/moodeng.c ../Core/Inc/moodeng.h \
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h:
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h:
 ../Core/Inc/rng.h:
+../Core/Inc/flash.h:

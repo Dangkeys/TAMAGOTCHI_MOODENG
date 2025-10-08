@@ -120,38 +120,6 @@ static void print_adc_line()
     }
 }
 
-void printStart()
-{
-    char msg[32];
-    int n = snprintf(msg, sizeof(msg), "Start %.2f\r\n", 0.0f);
-    if (n > 0)
-    {
-        HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
-    }
-}
-
-
-void printHunger(float value)
-{
-    char msg[32];
-    int n = snprintf(msg, sizeof(msg), "Hunger: %.2f\r\n", value);
-    if (n > 0)
-    {
-        HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
-    }
-}
-
-void printHappy(float value)
-{
-    char msg[32];
-    int n = snprintf(msg, sizeof(msg), "Happy: %.2f\r\n", value);
-    if (n > 0)
-    {
-        HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
-    }
-}
-
-
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
     if (hadc->Instance == ADC1)
@@ -161,6 +129,15 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
         HAL_UART_Transmit(&huart3, (uint8_t *)newline, strlen(newline), HAL_MAX_DELAY);
 
         HAL_ADC_Start_DMA(&hadc1, (uint32_t *)adc_buf, ADC_CH_COUNT);
+    }
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == GPIO_PIN_13)
+    {
+    	printStart();
+        Moodeng_Reset(&moodeng);
     }
 }
 
@@ -210,32 +187,17 @@ int main(void)
     MX_RNG_Init();
     MX_ADC1_Init();
     /* USER CODE BEGIN 2 */
-    if (!Flash_IsDataValid(NEXTDECAYHAPPY_ADDRESS))
-    {
-        Moodeng_Init(&moodeng);
-        Flash_Write_NUM(NEXTDECAYHAPPY_ADDRESS, moodeng.nextDecayHappy);
-        Flash_Write_NUM(NEXTDECAYHUNGER_ADDRESS, moodeng.nextDecayHunger);
-    }
-    float happy = Flash_Read_NUM(NEXTDECAYHAPPY_ADDRESS);
-    float hunger = Flash_Read_NUM(NEXTDECAYHUNGER_ADDRESS);
-    printStart();
-//    printValueMemory(weight);
+    Moodeng_Init(&moodeng);
 
     ILI9341_Init(); // initial driver setup to drive ili9341
     ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
     ILI9341_Fill_Screen(DARKGREY);
-    //  Display_Screen();
 
     UIManager_Init(&ui);
     ui.menuState = MENU_MAIN;     // confirmed state
     ui.selectedState = MENU_MAIN; // highlighted state
 
     HAL_ADC_Start(&hadc1);
-
-    //  if (HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buf, ADC_CH_COUNT) != HAL_OK) {
-    //      Error_Handler();
-    //  }
-
     /* USER CODE END 2 */
 
     /* Infinite loop */
@@ -245,9 +207,6 @@ int main(void)
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
-        printHappy(happy);
-        printHunger(hunger);
-        HAL_Delay(500);
 
         //    if (shouldClearScreen)
         //    {

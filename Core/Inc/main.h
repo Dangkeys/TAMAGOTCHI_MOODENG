@@ -76,8 +76,6 @@ void Error_Handler(void);
 #define T_MOSI_GPIO_Port GPIOE
 #define T_CS_Pin GPIO_PIN_6
 #define T_CS_GPIO_Port GPIOE
-#define User_Blue_Button_Pin GPIO_PIN_13
-#define User_Blue_Button_GPIO_Port GPIOC
 #define MCO_Pin GPIO_PIN_0
 #define MCO_GPIO_Port GPIOH
 #define RMII_MDC_Pin GPIO_PIN_1
@@ -92,8 +90,6 @@ void Error_Handler(void);
 #define RMII_RXD0_GPIO_Port GPIOC
 #define RMII_RXD1_Pin GPIO_PIN_5
 #define RMII_RXD1_GPIO_Port GPIOC
-#define RMII_TXD1_Pin GPIO_PIN_13
-#define RMII_TXD1_GPIO_Port GPIOB
 #define LD3_Pin GPIO_PIN_14
 #define LD3_GPIO_Port GPIOB
 #define STLK_RX_Pin GPIO_PIN_8
