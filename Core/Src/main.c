@@ -303,6 +303,7 @@ int main(void)
     if (currentTime - lastUpdateTime >= 100)
     {
         UIManager_Draw(&ui);
+        
         lastUpdateTime = currentTime;
     }
 
