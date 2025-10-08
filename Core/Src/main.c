@@ -36,7 +36,7 @@
 #include "ILI9341_GFX.h"
 
 #include "snow_tiger.h"
-
+#include "sprite_animator.h"
 #include "ui_manager.h"
 #include "moodeng.h"
 #include "timer.h"
@@ -303,6 +303,7 @@ int main(void)
     if (currentTime - lastUpdateTime >= 100)
     {
         UIManager_Draw(&ui);
+        
         lastUpdateTime = currentTime;
     }
 
@@ -387,11 +388,13 @@ void Handle_Button_Yellow(void)
       case MENU_MAIN:
         //select action(menu)
         ui.selectedState = (ui.selectedState + 1) % 6;
+
         //Sound Beep
         buzzer_play_sound(sound_beep);
         //skip select main menu
         if (ui.selectedState == MENU_MAIN)
           ui.selectedState = MENU_FEED;
+        ui.selectedStateAnim->x = 24 + ((ui.selectedState - 1) * 48);
         break;
       
       case MENU_FEED:
@@ -427,6 +430,7 @@ void Handle_Button_Yellow(void)
       default:
         break;
     }
+
     shouldClearScreen = true;
   }
 
