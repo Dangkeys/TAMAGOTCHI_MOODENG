@@ -427,8 +427,8 @@ void Handle_Button_Yellow(void)
         // isSleeping = confirm
         if (moodeng.isSleeping == false)
         {
-            moodeng.sleepingTime = 0;
-            moodeng.isSleeping = true;
+            setSleepingTime(&moodeng, 0);
+            setIsSleeping(&moodeng, true);
         }
         break;
 
@@ -449,16 +449,14 @@ void Handle_Button_Red(void)
     // exit sleeping
     if (ui.menuState == MENU_SLEEP && moodeng.isSleeping == true)
     {
-        moodeng.isSleeping = false;
+        setIsSleeping(&moodeng, false);
         if (moodeng.sleepingTime >= 1800)
         { // seconds
-            moodeng.isTired = 0;
-            moodeng.happy++;
-            if (moodeng.happy > 4)
-                moodeng.happy = 4;
-            moodeng.nextSleepyTime = 480;
+            setisTired(&moodeng, false);
+            setHappy(&moodeng, moodeng.happy + 1);
+            setNextSleepyTime(&moodeng, 480);
         }
-        moodeng.sleepingTime = 0;
+        setSleepingTime(&moodeng, 0);
     }
     // back to main menu
     else if (ui.menuState != MENU_MAIN)
@@ -473,18 +471,14 @@ void Handle_Button_Red(void)
     {
         if (moodeng.emotion != SILLY)
         {
-            moodeng.happy--;
-            if (moodeng.happy < 0)
-                moodeng.happy = 0;
+            setHappy(&moodeng, moodeng.happy - 1);
             // Sound Sad
             buzzer_play_sound(sound_sad);
         }
         else
         {
-            moodeng.discipline++;
-            if (moodeng.discipline > 6)
-                moodeng.discipline = 6;
-            moodeng.emotion = SCOLDED;
+            setDiscipline(&moodeng, moodeng.discipline + 1);
+            setEmotion(&moodeng, SCOLDED);
             // Sound Happy
             buzzer_play_sound(sound_happy);
         }
@@ -541,9 +535,9 @@ void Handle_Button_Blue(void)
         if (foodSelected == MEAL)
         {
             ui.activeAnim = &feedMealAnim;
-            moodeng.hunger += 2;
-            moodeng.weight += 2;
-            moodeng.poopRate += 0.4f;
+            etHunger(&moodeng, moodeng.hunger + 2);
+            etWeight(&moodeng, moodeng.weight + 2);
+            etPoopRate(&moodeng, moodeng.poopRate + 0.4f);
             // Sound Eat
             buzzer_play_sound(sound_eat);
         }
@@ -551,20 +545,12 @@ void Handle_Button_Blue(void)
         else
         {
             ui.activeAnim = &feedSnackAnim;
-            moodeng.happy += 2;
-            moodeng.weight += 4;
-            moodeng.poopRate += 0.6f;
+            setHappy(&moodeng, moodeng.happy + 2);
+            setWeight(&moodeng, moodeng.weight + 4);
+            setPoopRate(&moodeng, moodeng.poopRate + 0.6f);
             // Sound Eat
             buzzer_play_sound(sound_eat);
         }
-        if (moodeng.happy > 4)
-            moodeng.happy = 4;
-        if (moodeng.hunger > 4)
-            moodeng.hunger = 4;
-        if (moodeng.weight > 99)
-            moodeng.weight = 99;
-        if (moodeng.poopRate > 1.0f)
-            moodeng.poopRate = 1.0f;
         break;
 
     case MENU_PLAY:

@@ -320,10 +320,8 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
     case 0:
         if (totalMinutes >= 10)
         {
-            moodeng->evolution = 1;
-            moodeng->discipline += 2;
-            if (moodeng->discipline > 6)
-                moodeng->discipline = 6;
+            setEvolution(moodeng, 1);
+            setDiscipline(moodeng, moodeng->discipline + 2);
             // Sound Evolution
             buzzer_play_sound(sound_evolution);
         }
@@ -332,10 +330,8 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
     case 1:
         if (totalMinutes >= 180)
         {
-            moodeng->evolution = 2;
-            moodeng->discipline += 3;
-            if (moodeng->discipline > 6)
-                moodeng->discipline = 6;
+            setEvolution(moodeng, 2);
+            setDiscipline(moodeng, moodeng->discipline + 3);
             // Sound Evolution
             buzzer_play_sound(sound_evolution);
         }
@@ -344,10 +340,8 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
     case 2:
         if (totalMinutes >= 360)
         {
-            moodeng->evolution = 3;
-            moodeng->discipline += 4;
-            if (moodeng->discipline > 6)
-                moodeng->discipline = 6;
+            setEvolution(moodeng, 3);
+            setDiscipline(moodeng, moodeng->discipline + 4);
             // Sound Evolution
             buzzer_play_sound(sound_evolution);
         }
@@ -378,7 +372,7 @@ static void Moodeng_HandleDecay(int *timer, int *stat, int minRand, int maxRand,
             if (*stat <= 0)
             {
                 *stat = 0;
-                moodeng->isAlive = false;
+                setIsAlive(moodeng, false);
                 ui.activeAnim = &loseAnim;
                 // Sound game lose
                 buzzer_play_sound(sound_game_lose);
@@ -396,89 +390,81 @@ void Moodeng_Update(Moodeng_t *moodeng)
     // poop
     if (moodeng->nextPoopTime == -1 && moodeng->poopRate > 0.0f)
     {
-        moodeng->nextPoopTime = Moodeng_GenerateRandomNumber(moodeng, START_POOPTIME, END_POOPTIME);
+        setNextPoopTime(moodeng, Moodeng_GenerateRandomNumber(moodeng, START_POOPTIME, END_POOPTIME));
     }
     if (moodeng->nextPoopTime > 0)
     {
-        moodeng->nextPoopTime--;
+        setNextPoopTime(moodeng, moodeng->nextPoopTime - 1);
         if (moodeng->nextPoopTime == 0)
         {
             float randomProb = (float)Moodeng_GenerateRandomNumber(moodeng, 0, 100) / 100.0f;
 
             if (randomProb < moodeng->poopRate)
             {
-                moodeng->poopCount++;
-                if (moodeng->poopCount > 6)
-                    moodeng->poopCount = 6;
-                moodeng->nextPoopTime = -1;
+                setPoopCount(moodeng, moodeng->poopCount + 1);
+                setNextPoopTime(moodeng, -1);
             }
             else
             {
-                moodeng->poopRate += 0.2f;
-                if (moodeng->poopRate > 1.0f)
-                    moodeng->poopRate = 1.0f;
-                moodeng->nextPoopTime = Moodeng_GenerateRandomNumber(moodeng, START_POOPTIME, END_POOPTIME);
+                setPoopRate(moodeng, moodeng->poopRate + 0.2f);
+                setNextPoopTime(moodeng, Moodeng_GenerateRandomNumber(moodeng, START_POOPTIME, END_POOPTIME));
             }
         }
     }
     // sick
     if (moodeng->isSick == false && moodeng->nextSickTime > 0)
     {
-        moodeng->nextSickTime--;
+        setNextSickTime(moodeng, moodeng->nextSickTime - 1);
         if (moodeng->nextSickTime == 0)
         {
             float randomProb = (float)Moodeng_GenerateRandomNumber(moodeng, 0, 100) / 100.0f;
 
             if (randomProb < Moodeng_SickChance(moodeng))
             {
-                moodeng->isSick = true;
-                moodeng->nextHurtTime = MOODENG_HURT_TIME;
+                setIsSick(moodeng, true);
+                setNextHurtTime(moodeng, MOODENG_HURT_TIME);
                 // Sound Sick
                 buzzer_play_sound(sound_sick);
             }
-            moodeng->nextSickTime = MOODENG_INIT_SICKTIME;
+            setNextSickTime(moodeng, MOODENG_INIT_SICKTIME);
         }
     }
     // hurt
     if (moodeng->isSick == true && moodeng->nextHurtTime > 0)
     {
-        moodeng->nextHurtTime--;
+        setNextHurtTime(moodeng, moodeng->nextHurtTime - 1);
         if (moodeng->nextHurtTime == 0)
         {
-            moodeng->happy--;
-            moodeng->hunger--;
-            if (moodeng->happy < 0)
-                moodeng->happy = 0;
-            if (moodeng->hunger < 0)
-                moodeng->hunger = 0;
+            setHappy(moodeng, moodeng->happy - 1);
+            setHunger(moodeng, moodeng->hunger - 1);
             // Sound Sick
             buzzer_play_sound(sound_sick);
             if (moodeng->isSick == true)
-                moodeng->nextHurtTime = MOODENG_HURT_TIME;
+                setNextHurtTime(moodeng, MOODENG_HURT_TIME);
         }
     }
     // dirty
     if (moodeng->poopCount >= 2 && moodeng->nextDirtyTime == -1)
     {
-        moodeng->nextDirtyTime = MOODENG_DIRTY_TIME;
+        setNextDirtyTime(moodeng, MOODENG_DIRTY_TIME);
     }
     if (moodeng->nextDirtyTime > 0 && moodeng->poopCount >= 2)
     {
-        moodeng->nextDirtyTime--;
+        setNextDirtyTime(moodeng, moodeng->nextDirtyTime - 1);
         if (moodeng->nextDirtyTime == 0)
         {
-            moodeng->happy -= moodeng->poopCount - 1;
-            moodeng->nextDirtyTime = MOODENG_DIRTY_TIME;
+            setHappy(moodeng, moodeng->happy - (moodeng->poopCount - 1));
+            setNextDirtyTime(moodeng, MOODENG_DIRTY_TIME);
         }
     }
     // tired
-    if (moodeng->isTired == false && moodeng->nextSleepyTime > 0)
+    if (!moodeng->isTired && moodeng->nextSleepyTime > 0)
     {
-        moodeng->nextSleepyTime--;
+        setNextSleepyTime(moodeng, moodeng->nextSleepyTime - 1);
         if (moodeng->nextSleepyTime == 0)
         {
-            moodeng->isTired = true;
-            moodeng->nextSleepyTime = MOODENG_INIT_SLEEPYTIME;
+            setisTired(moodeng, true);
+            setNextSleepyTime(moodeng, MOODENG_INIT_SLEEPYTIME);
         }
     }
     // Happy, Hunger
@@ -491,19 +477,13 @@ bool Moodeng_Minigame(Moodeng_t *moodeng, int guess)
     bool win = (guess == Moodeng_GenerateRandomNumber(moodeng, 0, 1));
     if (win)
     {
-        moodeng->happy += 2;
-        if (moodeng->happy > 4)
-            moodeng->happy = 4;
+        setHappy(&moodeng, moodeng.happy + 2);
     }
     else
     {
-        moodeng->happy++;
-        if (moodeng->happy > 4)
-            moodeng->happy = 4;
+        setHappy(&moodeng, moodeng.happy + 1);
     }
-    moodeng->weight--;
-    if (moodeng->weight < 5)
-        moodeng->weight = 5;
+    setWeight(&moodeng, moodeng.weight - 1);
     return win;
 }
 
@@ -514,22 +494,16 @@ void Moodeng_Heal(Moodeng_t *moodeng)
         float randomProb = (float)Moodeng_GenerateRandomNumber(moodeng, 0, 100) / 100.0f;
         if (randomProb < moodeng->healRate)
         {
-            moodeng->isSick = false;
+            setIsSick(moodeng, false);
         }
         else
         {
-            moodeng->healRate += 0.25;
-            if (moodeng->healRate > 1.0)
-            {
-                moodeng->healRate = 1.0;
-            }
+            setHealRate(moodeng, moodeng->healRate + 0.25f);
         }
     }
     else
     {
-        moodeng->happy--;
-        if (moodeng->happy < 0)
-            moodeng->happy = 0;
+        setHappy(moodeng, moodeng->happy - 1);
     }
 }
 
@@ -537,13 +511,14 @@ bool Moodeng_Check_Feed(Moodeng_t *moodeng)
 {
     if (moodeng->emotion == SCOLDED)
     {
-        moodeng->emotion = NORMAL;
+        setEmotion(moodeng, NORMAL);
         return true;
     }
     else if (moodeng->emotion == SILLY)
     {
         return false;
     }
+
     float randomProb = (float)Moodeng_GenerateRandomNumber(moodeng, 0, 100) / 100.0f;
     if (randomProb < Moodeng_FeedingChance(moodeng))
     {
@@ -551,7 +526,7 @@ bool Moodeng_Check_Feed(Moodeng_t *moodeng)
     }
     else
     {
-        moodeng->emotion = SILLY;
+        setEmotion(moodeng, SILLY);
         return false;
     }
 }
@@ -560,7 +535,7 @@ bool Moodeng_Check_Play(Moodeng_t *moodeng)
 {
     if (moodeng->emotion == SCOLDED)
     {
-        moodeng->emotion = NORMAL;
+        setEmotion(moodeng, NORMAL);
         return true;
     }
     else if (moodeng->emotion == SILLY)
@@ -575,7 +550,7 @@ bool Moodeng_Check_Play(Moodeng_t *moodeng)
     }
     else
     {
-        moodeng->emotion = SILLY;
+        setEmotion(moodeng, SILLY);
         return false;
     }
 }
