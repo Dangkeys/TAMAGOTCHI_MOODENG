@@ -535,9 +535,9 @@ void Handle_Button_Blue(void)
         if (foodSelected == MEAL)
         {
             ui.activeAnim = &feedMealAnim;
-            etHunger(&moodeng, moodeng.hunger + 2);
-            etWeight(&moodeng, moodeng.weight + 2);
-            etPoopRate(&moodeng, moodeng.poopRate + 0.4f);
+            setHunger(&moodeng, moodeng.hunger + 2);
+            setWeight(&moodeng, moodeng.weight + 2);
+            setPoopRate(&moodeng, moodeng.poopRate + 0.4f);
             // Sound Eat
             buzzer_play_sound(sound_eat);
         }
