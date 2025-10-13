@@ -220,8 +220,8 @@ void setisTired(Moodeng_t *moodeng, bool value)
 
 void setEvolution(Moodeng_t *moodeng, int value)
 {
-    if (inRangeInt(value, 0, 2))
-        if (inRangeInt(value, 0, 2))
+    if (inRangeInt(value, 0, 3))
+        if (inRangeInt(value, 0, 3))
         {
             moodeng->evolution = value;
             Flash_Write_NUM(EVOLUTION_ADDRESS, (float)moodeng->evolution);
@@ -348,7 +348,7 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
         break;
 
     case 3:
-        if (moodeng->happy == 6)
+        if (moodeng->happy == 4)
         {
             ui.activeAnim = &winAnim;
             // Game Win
@@ -477,13 +477,13 @@ bool Moodeng_Minigame(Moodeng_t *moodeng, int guess)
     bool win = (guess == Moodeng_GenerateRandomNumber(moodeng, 0, 1));
     if (win)
     {
-        setHappy(&moodeng, moodeng.happy + 2);
+        setHappy(moodeng, moodeng->happy + 2);
     }
     else
     {
-        setHappy(&moodeng, moodeng.happy + 1);
+        setHappy(moodeng, moodeng->happy + 1);
     }
-    setWeight(&moodeng, moodeng.weight - 1);
+    setWeight(moodeng, moodeng->weight - 1);
     return win;
 }
 
