@@ -188,7 +188,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         break;
 
     case GPIO_PIN_13:
-        Moodeng_Reset(&moodeng);
+        Moodeng_WriteFlashData(&moodeng);
         break;
 
     default:
@@ -289,7 +289,6 @@ int main(void)
         // if (!buzzer.running){buzzer_play_sound(mario);}
 
         printStatus();
-        HAL_Delay(100);
         uint32_t currentTime = HAL_GetTick();
 
         UIManager_Update(&ui, currentTime);

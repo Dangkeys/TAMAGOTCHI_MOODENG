@@ -43,6 +43,7 @@ typedef struct {
 } Moodeng_t;
 
 void Moodeng_Init(Moodeng_t* moodeng);
+void Moodeng_WriteFlashData(Moodeng_t* moodeng);
 void Moodeng_Reset(Moodeng_t* moodeng);
 int Moodeng_GenerateRandomNumber(Moodeng_t* moodeng, int start, int end);
 void Moodeng_SetHappy(Moodeng_t* moodeng, int value);
