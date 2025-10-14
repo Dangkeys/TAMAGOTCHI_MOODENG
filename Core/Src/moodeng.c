@@ -94,10 +94,10 @@ void Moodeng_Reset(Moodeng_t *moodeng)
     moodeng->emotion = MOODENG_INIT_EMOTION;
     moodeng->nextDecayHappy = Moodeng_GenerateRandomNumber(moodeng, START_DECAY_HAPPY, END_DECAY_HAPPY);
     moodeng->nextDecayHunger = Moodeng_GenerateRandomNumber(moodeng, START_DECAY_HUNGER, END_DECAY_HUNGER);
-    moodeng->nextPoopTime = -1;
+    moodeng->nextPoopTime = 0;
     moodeng->nextSickTime = MOODENG_INIT_SICKTIME;
-    moodeng->nextHurtTime = -1;
-    moodeng->nextDirtyTime = -1;
+    moodeng->nextHurtTime = 0;
+    moodeng->nextDirtyTime = 0;
     moodeng->nextSleepyTime = MOODENG_INIT_SLEEPYTIME;
     moodeng->sleepingTime = 0; // seconds
     moodeng->isSleeping = false;
@@ -390,7 +390,7 @@ void Moodeng_Update(Moodeng_t *moodeng)
     if (moodeng->isSleeping) return;
     if (moodeng->isAlive == false) return;
     // poop
-    if (moodeng->nextPoopTime == -1 && moodeng->poopRate > 0.0f)
+    if (moodeng->nextPoopTime == 0 && moodeng->poopRate > 0.0f)
     {
         setNextPoopTime(moodeng, Moodeng_GenerateRandomNumber(moodeng, START_POOPTIME, END_POOPTIME));
     }
@@ -404,7 +404,7 @@ void Moodeng_Update(Moodeng_t *moodeng)
             if (randomProb  < moodeng->poopRate)
             {
                 setPoopCount(moodeng, moodeng->poopCount + 1);
-                setNextPoopTime(moodeng, -1);
+                setNextPoopTime(moodeng, 0);
             }
             else
             {
@@ -446,7 +446,7 @@ void Moodeng_Update(Moodeng_t *moodeng)
         }
     }
     // dirty
-    if (moodeng->poopCount >= 2 && moodeng->nextDirtyTime == -1)
+    if (moodeng->poopCount >= 2 && moodeng->nextDirtyTime == 0)
     {
         setNextDirtyTime(moodeng, MOODENG_DIRTY_TIME);
     }
