@@ -7,6 +7,9 @@
 #include "flash.h"
 extern UIManager_t ui;
 
+bool losing = false;
+uint32_t loseStart = 0;
+
 // Default starting stats (easier tuning)
 #define MOODENG_INIT_HAPPY 2
 #define MOODENG_INIT_WEIGHT 5
@@ -289,6 +292,7 @@ float Moodeng_PlayingChance(Moodeng_t *moodeng)
 
 void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
 {
+    if (moodeng->isAlive == false) return; 
     int totalMinutes = (gameClock->hour * 60) + gameClock->minute;
 
     switch (moodeng->evolution)
@@ -339,8 +343,9 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
 
 void Moodeng_Update(Moodeng_t *moodeng)
 {
-    // skip when sleep
+    // skip when sleep / die
     if (moodeng->isSleeping) return;
+    if (moodeng->isAlive == false) return;
     // poop
     if (moodeng->nextPoopTime == -1 && moodeng->poopRate > 0.0f)
     {
@@ -528,8 +533,24 @@ bool Moodeng_Check_Play(Moodeng_t *moodeng)
 
 void Moodeng_Handle_Lose(Moodeng_t* moodeng) 
 {
-    if (moodeng->isAlive == false) return;  
-    setIsAlive(moodeng, false);
-    ui.activeAnim = &loseAnim;
-    buzzer_play_sound(sound_game_lose);
+    if (moodeng->isAlive == true) {
+        setIsAlive(moodeng, false);
+        ui.activeAnim = &loseAnim;
+        buzzer_play_sound(sound_game_lose);
+        losing = true;
+        loseStart = HAL_GetTick();
+    }
+}
+
+void Moodeng_lose_animation(Moodeng_t* moodeng)
+{
+    if (moodeng->isAlive == false) {
+        if (losing && HAL_GetTick() - loseStart >= 2000) {
+            losing = false;
+            Moodeng_Reset(moodeng);
+            Timer_Reset(&gameClock);
+            ui.menuState = MENU_MAIN;
+            ui.activeAnim = &idleAnim;
+        }
+    }
 }
