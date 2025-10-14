@@ -37,7 +37,6 @@ extern Moodeng_t moodeng;
 
 #define MOODENG_X_POS 28
 #define MOODENG_Y_POS 56
-#define SELECT_STATE_X_POS 24
 void UIManager_Init(UIManager_t *ui)
 {
     static const uint16_t *idleFrames[] = {idle1, idle2, idle3, idle4};
@@ -78,7 +77,7 @@ void UIManager_Init(UIManager_t *ui)
     SpriteAnimator_Init(&stubbornAnim, stubbornFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
     SpriteAnimator_Init(&playGameAnim, playGameFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
 
-    SpriteAnimator_Init(&selectStateAnim, selectStateFrames, 1, SELECT_STATE_X_POS, 244, 18, 15, 300);
+    SpriteAnimator_Init(&selectStateAnim, selectStateFrames, 1, 0, 244, 18, 15, 300);
     SpriteAnimator_Init(&menuBarAnim, menuBarFrame, 1, 0, SCREEN_HEIGHT - 56, SCREEN_WIDTH, 56, 300);
     SpriteAnimator_Init(&heartAnim, heartFrames, 1, 5, 5, 40, 40, 300);
     SpriteAnimator_Init(&hungerAnim, hungerFrames, 1, SCREEN_WIDTH - 45, 5, 40, 40, 300);
@@ -127,8 +126,8 @@ void UIManager_SetState(UIManager_t *ui, MenuState_t newState)
         }
         break;
     default:
-        ui->activeAnim = &idleAnim;
-        ui->selectedStateAnim->x = -24;
+        ui->activeAnim = moodeng.isSick ? &sickAnim : &idleAnim;
+        ui->selectedStateAnim->x = 0;
         break;
     }
 }
@@ -192,10 +191,7 @@ void UIManager_Draw(UIManager_t *ui)
                                             SCREEN_WIDTH,
                                             244 + 15,
                                             BACKGROUND_COLOR); // clear previous
-        if (ui->selectedStateAnim->x > 0)
-        {
-            SpriteAnimator_Draw(ui->selectedStateAnim);
-        }
+        SpriteAnimator_Draw(ui->selectedStateAnim);
     }
     if (ui->heartAnim != NULL)
     {
@@ -214,4 +210,8 @@ void UIManager_Draw(UIManager_t *ui)
         ILI9341_Draw_Text(hungerText, ui->hungerAnim->x - 20,
                           ui->hungerAnim->y + 12, WHITE, 2, BACKGROUND_COLOR);
     }
+    char sickText[8];
+    snprintf(sickText, sizeof(sickText), "%s", moodeng.isSick ? "Yes" : "No");
+    ILI9341_Draw_Text(sickText, ui->hungerAnim->x - 20,
+                      ui->hungerAnim->y + 32, WHITE, 2, BACKGROUND_COLOR);
 }

@@ -37,15 +37,6 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/dma.h ../Core/Inc/rng.h \
  ../Core/Inc/spi.h ../Core/Inc/tim.h ../Core/Inc/usart.h \
  ../Core/Inc/gpio.h \
-<<<<<<< HEAD
- C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_Touchscreen.h \
- C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_STM32_Driver.h \
- C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h \
- C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/snow_tiger.h \
- ../Core/Inc/ui_manager.h ../Core/Inc/sprite_animator.h \
- ../Core/Inc/moodeng.h ../Core/Inc/timer.h ../Core/Inc/rng.h \
- ../Core/Inc/timer.h ../Core/Inc/buzzer.h ../Core/Inc/sound.h
-=======
  C:/Users/HP/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_Touchscreen.h \
  C:/Users/HP/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_STM32_Driver.h \
  C:/Users/HP/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h \
@@ -54,7 +45,6 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/sprite_animator.h ../Core/Inc/moodeng.h ../Core/Inc/timer.h \
  ../Core/Inc/rng.h ../Core/Inc/timer.h ../Core/Inc/buzzer.h \
  ../Core/Inc/sound.h
->>>>>>> 7c778e24092f0b33055d8595fb4f8746a4e9e64d
 ../Core/Inc/main.h:
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h:
 ../Core/Inc/stm32f7xx_hal_conf.h:
@@ -99,18 +89,11 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/tim.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/gpio.h:
-<<<<<<< HEAD
-C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_Touchscreen.h:
-C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_STM32_Driver.h:
-C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h:
-C:/Users/Gan/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/snow_tiger.h:
-=======
 C:/Users/HP/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_Touchscreen.h:
 C:/Users/HP/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_STM32_Driver.h:
 C:/Users/HP/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h:
 C:/Users/HP/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/snow_tiger.h:
 ../Core/Inc/sprite_animator.h:
->>>>>>> 7c778e24092f0b33055d8595fb4f8746a4e9e64d
 ../Core/Inc/ui_manager.h:
 ../Core/Inc/sprite_animator.h:
 ../Core/Inc/moodeng.h:

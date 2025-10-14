@@ -1,9 +1,4 @@
 ../Core/Src/ui_manager.c:40:6:UIManager_Init	32	static
 ../Core/Src/ui_manager.c:96:6:UIManager_SetState	16	static
-<<<<<<< HEAD
-../Core/Src/ui_manager.c:119:6:UIManager_Update	160	static
-../Core/Src/ui_manager.c:161:6:UIManager_Draw	24	static
-=======
-../Core/Src/ui_manager.c:133:6:UIManager_Update	160	static
-../Core/Src/ui_manager.c:175:6:UIManager_Draw	24	static
->>>>>>> 7c778e24092f0b33055d8595fb4f8746a4e9e64d
+../Core/Src/ui_manager.c:134:6:UIManager_Update	160	static
+../Core/Src/ui_manager.c:176:6:UIManager_Draw	48	static

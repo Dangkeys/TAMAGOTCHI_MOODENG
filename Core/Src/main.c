@@ -404,6 +404,7 @@ void Handle_Button_Yellow(void)
     case MENU_FEED:
         // select food
         foodSelected = (foodSelected == MEAL) ? SNACK : MEAL;
+        ui.activeAnim = (foodSelected == MEAL) ? &feedMealAnim : &feedSnackAnim;
         // Sound Beep
         buzzer_play_sound(sound_beep);
         break;
@@ -520,6 +521,8 @@ void Handle_Button_Blue(void)
             else
             {
                 ui.activeAnim = &stubbornAnim;
+                ui.selectedState = MENU_MAIN;
+                ui.selectedStateAnim->x = 0;
                 // Sound stubborn
                 buzzer_play_sound(sound_stubborn);
             }
@@ -532,6 +535,8 @@ void Handle_Button_Blue(void)
             else
             {
                 ui.activeAnim = &stubbornAnim;
+                ui.selectedState = MENU_MAIN;
+                ui.selectedStateAnim->x = 0;
                 // Sound stubborn
                 buzzer_play_sound(sound_stubborn);
             }
@@ -549,7 +554,6 @@ void Handle_Button_Blue(void)
         // feed meal
         if (foodSelected == MEAL)
         {
-            ui.activeAnim = &feedMealAnim;
             setHunger(&moodeng, moodeng.hunger + 2);
             setWeight(&moodeng, moodeng.weight + 2);
             setPoopRate(&moodeng, moodeng.poopRate + 0.4f);
@@ -559,7 +563,6 @@ void Handle_Button_Blue(void)
         // feed snack
         else
         {
-            ui.activeAnim = &feedSnackAnim;
             setHappy(&moodeng, moodeng.happy + 2);
             setWeight(&moodeng, moodeng.weight + 4);
             setPoopRate(&moodeng, moodeng.poopRate + 0.6f);

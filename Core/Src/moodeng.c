@@ -186,6 +186,7 @@ void setPoopRate(Moodeng_t *moodeng, float value)
 void setIsSick(Moodeng_t *moodeng, bool value)
 {
     moodeng->isSick = value;
+    ui.activeAnim = moodeng->isSick ? &sickAnim : &idleAnim;
     Flash_Write_NUM(ISSICK_ADDRESS, (float)moodeng->isSick);
 }
 
