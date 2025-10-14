@@ -14,7 +14,7 @@ void Timer_Init(Clock_t* gameClock) {
 
 void Timer_Update(Clock_t* gameClock) {
     if (moodeng.isAlive == false) {
-        Moodeng_lose_animation(&moodeng);
+        Moodeng_Endgame_animation(&moodeng);
     }
     gameClock->second++;
     if (moodeng.isSleeping == true) {
