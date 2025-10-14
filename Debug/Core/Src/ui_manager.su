@@ -1,5 +1,7 @@
-../Core/Src/ui_manager.c:42:6:UIManager_Init	32	static
-../Core/Src/ui_manager.c:106:6:UIManager_SetState	16	static
-../Core/Src/ui_manager.c:144:6:UIManager_Update	160	static
-../Core/Src/ui_manager.c:186:6:drawStat	32	static
-../Core/Src/ui_manager.c:196:6:UIManager_Draw	24	static
+../Core/Src/ui_manager.c:44:6:UIManager_Init	40	static
+../Core/Src/ui_manager.c:111:6:setActiveAnim	16	static
+../Core/Src/ui_manager.c:116:6:UIManager_SetState	16	static
+../Core/Src/ui_manager.c:155:6:UIManager_Update	160	static
+../Core/Src/ui_manager.c:197:6:drawStat	32	static
+../Core/Src/ui_manager.c:207:6:UIManager_Draw	24	static
+../Core/Src/ui_manager.c:229:6:uiManagerResetToIdle	16	static

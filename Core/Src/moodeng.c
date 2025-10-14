@@ -186,7 +186,7 @@ void setPoopRate(Moodeng_t *moodeng, float value)
 void setIsSick(Moodeng_t *moodeng, bool value)
 {
     moodeng->isSick = value;
-    ui.activeAnim = moodeng->isSick ? &sickAnim : &idleAnim;
+    setActiveAnim(&ui, moodeng->isSick ? &sickAnim : &idleAnim);
     Flash_Write_NUM(ISSICK_ADDRESS, (float)moodeng->isSick);
 }
 
@@ -223,6 +223,7 @@ void setEmotion(Moodeng_t *moodeng, Emotion_t value)
 void setIsAlive(Moodeng_t *moodeng, bool value)
 {
     moodeng->isAlive = value;
+    uiManagerResetToIdle(&ui);
     Flash_Write_NUM(ISALIVE_ADDRESS, (float)moodeng->isAlive);
 }
 
@@ -335,7 +336,7 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
     case 3:
         if (moodeng->happy == 4)
         {
-            ui.activeAnim = &winAnim;
+            setActiveAnim(&ui, &winAnim);
             // Game Win
             buzzer_play_sound(sound_game_win);
         }
@@ -540,7 +541,7 @@ void Moodeng_Handle_Lose(Moodeng_t* moodeng)
 {
     if (moodeng->isAlive == true) {
         setIsAlive(moodeng, false);
-        ui.activeAnim = &loseAnim;
+        setActiveAnim(&ui, &loseAnim);
         buzzer_play_sound(sound_game_lose);
         losing = true;
         loseStart = HAL_GetTick();
@@ -556,7 +557,7 @@ void Moodeng_lose_animation(Moodeng_t* moodeng)
             Moodeng_Reset(moodeng);
             Timer_Reset(&gameClock);
             ui.menuState = MENU_MAIN;
-            ui.activeAnim = &idleAnim;
+            setActiveAnim(&ui, &idleAnim);
         }
     }
 }

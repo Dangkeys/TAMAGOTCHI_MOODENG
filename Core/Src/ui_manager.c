@@ -21,7 +21,7 @@ SpriteAnimator_t feedSnackAnim;
 SpriteAnimator_t feedMealAnim;
 SpriteAnimator_t playGameAnim;
 SpriteAnimator_t medicineAnim;
-SpriteAnimator_t cleanAnim;
+SpriteAnimator_t showerAnim;
 SpriteAnimator_t winAnim;
 SpriteAnimator_t loseAnim;
 SpriteAnimator_t miniGameCorrectAnim;
@@ -33,6 +33,8 @@ SpriteAnimator_t heartAnim;
 SpriteAnimator_t hungerAnim;
 SpriteAnimator_t shitAnim;
 SpriteAnimator_t evolutionAnim;
+SpriteAnimator_t injectAnim;
+SpriteAnimator_t cleanAnim;
 extern ADC_HandleTypeDef hadc1; // From main.c or auto-generated MX_ADC1_Init()
 extern UART_HandleTypeDef huart3;
 extern Moodeng_t moodeng;
@@ -51,44 +53,48 @@ void UIManager_Init(UIManager_t *ui)
 
     static const uint16_t *playGameFrames[] = {playGame1};
     static const uint16_t *medicineFrames[] = {medicine1};
-    static const uint16_t *cleanFrames[] = {shower1};
-    static const uint16_t *winFrames[] = {win1};
+    static const uint16_t *showerFrames[] = {shower1};
+    static const uint16_t *winFrames[] = {win1, win2};
     static const uint16_t *loseFrames[] = {lose1};
     static const uint16_t *miniGameCorrectFrames[] = {correctAnswer1};
     static const uint16_t *miniGameWrongFrames[] = {wrongAnswer1};
-    static const uint16_t *sickFrames[] = {sickness1};
-    static const uint16_t *stubbornFrames[] = {stubborn1};
+    static const uint16_t *sickFrames[] = {sickness1, sickness2};
+    static const uint16_t *stubbornFrames[] = {stubborn1, stubborn2};
+    static const uint16_t *injectFrames[] = {inject1, inject2, medicine1};
+    static const uint16_t *cleanFrames[] = {clean1, clean2, shower1};
     static const uint16_t *selectStateFrames[] = {selectState1};
     static const uint16_t *heartFrames[] = {heart1};
     static const uint16_t *hungerFrames[] = {hunger1};
     static const uint16_t *shitFrames[] = {shit1};
     static const uint16_t *evolutionFrames[] = {evolution1};
 
-    SpriteAnimator_Init(&idleAnim, idleFrames, 4, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
-    SpriteAnimator_Init(&sleepAnimDay, sleepFramesDay, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
-    SpriteAnimator_Init(&sleepAnimNight, sleepFramesNight, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
+    SpriteAnimator_Init(&idleAnim, idleFrames, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&sleepAnimDay, sleepFramesDay, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&sleepAnimNight, sleepFramesNight, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
 
-    SpriteAnimator_Init(&feedSnackAnim, feedSnackFrames, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
-    SpriteAnimator_Init(&feedMealAnim, feedMealFrames, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
+    SpriteAnimator_Init(&feedSnackAnim, feedSnackFrames, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&feedMealAnim, feedMealFrames, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
 
-    SpriteAnimator_Init(&medicineAnim, medicineFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
-    SpriteAnimator_Init(&cleanAnim, cleanFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
-    SpriteAnimator_Init(&winAnim, winFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
-    SpriteAnimator_Init(&loseAnim, loseFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
-    SpriteAnimator_Init(&miniGameCorrectAnim, miniGameCorrectFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
-    SpriteAnimator_Init(&miniGameWrongAnim, miniGameWrongFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
-    SpriteAnimator_Init(&sickAnim, sickFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
-    SpriteAnimator_Init(&stubbornAnim, stubbornFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
-    SpriteAnimator_Init(&playGameAnim, playGameFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300);
+    SpriteAnimator_Init(&medicineAnim, medicineFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&showerAnim, showerFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&winAnim, winFrames, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&loseAnim, loseFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&miniGameCorrectAnim, miniGameCorrectFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&miniGameWrongAnim, miniGameWrongFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&sickAnim, sickFrames, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&stubbornAnim, stubbornFrames, 2, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&playGameAnim, playGameFrames, 1, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, true);
+    SpriteAnimator_Init(&injectAnim, injectFrames, 3, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, false);
+    SpriteAnimator_Init(&cleanAnim, cleanFrames, 3, MOODENG_X_POS, MOODENG_Y_POS, 180, 180, 300, false);
 
-    SpriteAnimator_Init(&selectStateAnim, selectStateFrames, 1, 0, 244, 18, 15, 300);
-    SpriteAnimator_Init(&menuBarAnim, menuBarFrame, 1, 0, SCREEN_HEIGHT - 56, SCREEN_WIDTH, 56, 300);
+    SpriteAnimator_Init(&selectStateAnim, selectStateFrames, 1, 0, 244, 18, 15, 300, true);
+    SpriteAnimator_Init(&menuBarAnim, menuBarFrame, 1, 0, SCREEN_HEIGHT - 56, SCREEN_WIDTH, 56, 300, true);
 
-    SpriteAnimator_Init(&heartAnim, heartFrames, 1, 0, 5, 40, 40, 300);
-    SpriteAnimator_Init(&hungerAnim, hungerFrames, 1, 55, 5, 40, 40, 300);
+    SpriteAnimator_Init(&heartAnim, heartFrames, 1, 0, 5, 40, 40, 300, true);
+    SpriteAnimator_Init(&hungerAnim, hungerFrames, 1, 55, 5, 40, 40, 300, true);
 
-    SpriteAnimator_Init(&shitAnim, shitFrames, 1, 110, 5, 40, 40, 300);
-    SpriteAnimator_Init(&evolutionAnim, evolutionFrames, 1, 165, 8, 64, 35, 300);
+    SpriteAnimator_Init(&shitAnim, shitFrames, 1, 110, 5, 40, 40, 300, true);
+    SpriteAnimator_Init(&evolutionAnim, evolutionFrames, 1, 165, 8, 64, 35, 300, true);
 
     ui->menuState = MENU_MAIN;
     ui->activeAnim = &idleAnim;
@@ -102,7 +108,11 @@ void UIManager_Init(UIManager_t *ui)
     ui->isLightOn = true; // Default day
     ui->lightLevel = 0;
 }
-
+void setActiveAnim(UIManager_t *ui, SpriteAnimator_t *anim)
+{
+    ui->activeAnim = anim;
+    ui->activeAnim->currentFrame = 0; // Reset to first frame
+}
 void UIManager_SetState(UIManager_t *ui, MenuState_t newState)
 {
     ui->menuState = newState;
@@ -110,33 +120,34 @@ void UIManager_SetState(UIManager_t *ui, MenuState_t newState)
     switch (newState)
     {
     case MENU_FEED:
-        ui->activeAnim = &feedMealAnim;
+        setActiveAnim(ui, &feedMealAnim);
         break;
     case MENU_PLAY:
-        ui->activeAnim = &playGameAnim;
+        setActiveAnim(ui, &playGameAnim);
         break;
     case MENU_CLEAN:
-        ui->activeAnim = &cleanAnim;
+        setActiveAnim(ui, &showerAnim);
         break;
     case MENU_MEDICINE:
-        ui->activeAnim = &medicineAnim;
+        setActiveAnim(ui, &medicineAnim);
         break;
 
     case MENU_SLEEP:
         if (moodeng.isSleeping)
         {
             if (ui->isLightOn)
-                ui->activeAnim = &sleepAnimDay;
+                setActiveAnim(ui, &sleepAnimDay);
             else
-                ui->activeAnim = &sleepAnimNight;
+                setActiveAnim(ui, &sleepAnimNight);
         }
         else
         {
-            ui->activeAnim = &idleAnim;
+            setActiveAnim(ui, &idleAnim);
         }
         break;
     default:
-        ui->activeAnim = moodeng.isSick ? &sickAnim : &idleAnim;
+        setActiveAnim(ui, moodeng.isSick ? &sickAnim : &idleAnim);
+        ui->selectedState = MENU_MAIN;
         ui->selectedStateAnim->x = 0;
         break;
     }
@@ -213,4 +224,12 @@ void UIManager_Draw(UIManager_t *ui)
     drawStat(ui->shitAnim, moodeng.poopCount);
 
     drawStat(ui->evolutionAnim, moodeng.evolution);
+}
+
+void uiManagerResetToIdle(UIManager_t *ui)
+{
+    ui->menuState = MENU_MAIN;
+    ui->selectedState = MENU_MAIN;
+    ui->selectedStateAnim->x = 0;
+    setActiveAnim(ui, moodeng.isSick ? &sickAnim : &idleAnim);
 }

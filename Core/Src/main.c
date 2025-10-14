@@ -65,7 +65,6 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-bool shouldClearScreen = false;
 
 // const char* stateNames[STATE_COUNT] = {
 //     "Idle",
@@ -291,12 +290,6 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-        //    if (shouldClearScreen)
-        //    {
-        //      shouldClearScreen = false;
-        //      Display_Screen();
-        //    }
-        // if (!buzzer.running){buzzer_play_sound(mario);}
 
         //printStatus();
         uint32_t currentTime = HAL_GetTick();
@@ -307,13 +300,6 @@ int main(void)
         {
             UIManager_Draw(&ui);
             lastUpdateTime = currentTime;
-        }
-
-        if (shouldClearScreen)
-        {
-            ILI9341_Draw_Text("Medicine", 120, 10, DARKGREY, 2, DARKGREY);
-            ILI9341_Draw_Text("Medicine", 120, 40, DARKGREY, 2, DARKGREY);
-            shouldClearScreen = false;
         }
     }
   /* USER CODE END 3 */
@@ -404,7 +390,7 @@ void Handle_Button_Yellow(void)
     case MENU_FEED:
         // select food
         foodSelected = (foodSelected == MEAL) ? SNACK : MEAL;
-        ui.activeAnim = (foodSelected == MEAL) ? &feedMealAnim : &feedSnackAnim;
+        setActiveAnim(&ui, (foodSelected == MEAL) ? &feedMealAnim : &feedSnackAnim);
         // Sound Beep
         buzzer_play_sound(sound_beep);
         break;
@@ -414,24 +400,26 @@ void Handle_Button_Yellow(void)
         // return true if win
         if (Moodeng_Minigame(&moodeng, 0))
         {
-            ui.activeAnim = &miniGameCorrectAnim;
+            setActiveAnim(&ui, &miniGameCorrectAnim);
             // Sound Win
             buzzer_play_sound(sound_win);
         }
         else
         {
-            ui.activeAnim = &miniGameWrongAnim;
+            setActiveAnim(&ui, &miniGameWrongAnim);
             // Sound Lose
             buzzer_play_sound(sound_lose);
         }
         break;
 
     case MENU_CLEAN:
+        setActiveAnim(&ui, &cleanAnim);
         setPoopCount(&moodeng, moodeng.poopCount - 1);
         buzzer_play_sound(sound_clean_up);
         break;
 
     case MENU_MEDICINE:
+        setActiveAnim(&ui, &injectAnim);
         Moodeng_Heal(&moodeng);
         buzzer_play_sound(sound_take_medicine);
         break;
@@ -440,7 +428,7 @@ void Handle_Button_Yellow(void)
         break;
     }
 
-    shouldClearScreen = true;
+
 }
 
 void Handle_Button_Red(void)
@@ -469,7 +457,7 @@ void Handle_Button_Red(void)
     if (ui.menuState != MENU_MAIN)
     {
         UIManager_SetState(&ui, MENU_MAIN);
-        shouldClearScreen = true;
+
         // Sound Beep
         buzzer_play_sound(sound_beep);
     }
@@ -486,6 +474,7 @@ void Handle_Button_Red(void)
         {
             setDiscipline(&moodeng, moodeng.discipline + 1);
             setEmotion(&moodeng, SCOLDED);
+            setActiveAnim(&ui, &idleAnim);
             // Sound Happy
             buzzer_play_sound(sound_happy);
         }
@@ -513,7 +502,7 @@ void Handle_Button_Blue(void)
                 UIManager_SetState(&ui, ui.selectedState);
             else
             {
-                ui.activeAnim = &stubbornAnim;
+                setActiveAnim(&ui, &stubbornAnim);
                 ui.selectedState = MENU_MAIN;
                 ui.selectedStateAnim->x = 0;
                 // Sound stubborn
@@ -527,7 +516,7 @@ void Handle_Button_Blue(void)
                 UIManager_SetState(&ui, ui.selectedState);
             else
             {
-                ui.activeAnim = &stubbornAnim;
+                setActiveAnim(&ui, &stubbornAnim);
                 ui.selectedState = MENU_MAIN;
                 ui.selectedStateAnim->x = 0;
                 // Sound stubborn
@@ -539,7 +528,7 @@ void Handle_Button_Blue(void)
             UIManager_SetState(&ui, ui.selectedState);
             setSleepingTime(&moodeng, 0);
             setIsSleeping(&moodeng, true);
-            ui.activeAnim = &sleepAnimDay;
+            setActiveAnim(&ui, &sleepAnimDay);
             buzzer_play_sound(sound_sleep);
         }
         else
@@ -548,7 +537,7 @@ void Handle_Button_Blue(void)
             // Sound Beep
             buzzer_play_sound(sound_beep);
         }
-        shouldClearScreen = true;
+
         break;
 
     case MENU_FEED:
@@ -577,18 +566,18 @@ void Handle_Button_Blue(void)
         // return true if win
         if (Moodeng_Minigame(&moodeng, 1))
         {
-            ui.activeAnim = &miniGameCorrectAnim;
+            setActiveAnim(&ui, &miniGameCorrectAnim);
             // Sound Win
             buzzer_play_sound(sound_win);
         }
         else
         {
-            ui.activeAnim = &miniGameWrongAnim;
+            setActiveAnim(&ui, &miniGameWrongAnim);
             // Sound Lose
             buzzer_play_sound(sound_lose);
         }
         break;
-
+    
     default:
         break;
     }

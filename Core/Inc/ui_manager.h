@@ -21,13 +21,16 @@ extern SpriteAnimator_t feedSnackAnim;
 extern SpriteAnimator_t feedMealAnim;
 extern SpriteAnimator_t playGameAnim;
 extern SpriteAnimator_t medicineAnim;
-extern SpriteAnimator_t cleanAnim;
+extern SpriteAnimator_t showerAnim;
 extern SpriteAnimator_t winAnim;
 extern SpriteAnimator_t loseAnim;
 extern SpriteAnimator_t miniGameCorrectAnim;
 extern SpriteAnimator_t miniGameWrongAnim;
 extern SpriteAnimator_t sickAnim;
 extern SpriteAnimator_t stubbornAnim;
+extern SpriteAnimator_t injectAnim;
+extern SpriteAnimator_t cleanAnim;
+
 typedef enum {
     MENU_MAIN = 0,
     MENU_FEED,
@@ -57,5 +60,7 @@ void UIManager_SetState(UIManager_t* ui, MenuState_t newState);
 void UIManager_Update(UIManager_t* ui, uint32_t currentTime);
 void UIManager_Draw(UIManager_t* ui);
 void UIManager_Display_text(UIManager_t* ui,bool shouldClear);
+void setActiveAnim(UIManager_t *ui, SpriteAnimator_t *anim);
+void uiManagerResetToIdle(UIManager_t *ui);
 
 #endif /* INC_UI_MANAGER_H_ */
