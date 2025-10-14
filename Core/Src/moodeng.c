@@ -1,4 +1,5 @@
 #include "moodeng.h"
+#include "timer.h"
 #include <stdbool.h>
 #include "rng.h"
 #include "ui_manager.h"
@@ -6,6 +7,7 @@
 #include "sound.h"
 #include "flash.h"
 extern UIManager_t ui;
+extern Clock_t gameClock;
 
 bool losing = false;
 uint32_t loseStart = 0;
