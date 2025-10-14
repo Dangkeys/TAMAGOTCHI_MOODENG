@@ -272,8 +272,6 @@ void setIsSleeping(Moodeng_t *moodeng, bool value)
     Flash_Write_NUM(ISSLEEPING_ADDRESS, (float)moodeng->isSleeping);
 }
 
-
-
 float Moodeng_FeedingChance(Moodeng_t *moodeng)
 {
     return moodeng->discipline * 0.17f;
@@ -530,8 +528,7 @@ bool Moodeng_Check_Play(Moodeng_t *moodeng)
 
 void Moodeng_Handle_Lose(Moodeng_t* moodeng) 
 {
-    if (moodeng->isAlive == false) return ; 
-
+    if (moodeng->isAlive == false) return;  
     setIsAlive(moodeng, false);
     ui.activeAnim = &loseAnim;
     buzzer_play_sound(sound_game_lose);
