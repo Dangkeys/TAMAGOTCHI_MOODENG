@@ -427,10 +427,12 @@ void Handle_Button_Yellow(void)
 
     case MENU_CLEAN:
         setPoopCount(&moodeng, moodeng.poopCount - 1);
+        buzzer_play_sound(sound_clean_up);
         break;
 
     case MENU_MEDICINE:
         Moodeng_Heal(&moodeng);
+        buzzer_play_sound(sound_take_medicine);
         break;
 
     default:
@@ -533,6 +535,7 @@ void Handle_Button_Blue(void)
             setSleepingTime(&moodeng, 0);
             setIsSleeping(&moodeng, true);
             ui.activeAnim = &sleepAnimDay;
+            buzzer_play_sound(sound_sleep);
         }
         else
         {
