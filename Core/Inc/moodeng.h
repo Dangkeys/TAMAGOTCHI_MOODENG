@@ -54,7 +54,7 @@ void setPoopRate(Moodeng_t* moodeng, float value);
 void setIsSick(Moodeng_t* moodeng, bool value);
 void setHealRate(Moodeng_t* moodeng, float value);
 void setDiscipline(Moodeng_t* moodeng, int value);
-void setisTired(Moodeng_t* moodeng, bool value);
+void setIsTired(Moodeng_t *moodeng, bool value);
 void setEvolution(Moodeng_t* moodeng, int value);
 void setIsAlive(Moodeng_t* moodeng, bool value);
 void setEmotion(Moodeng_t* moodeng, Emotion_t value);
@@ -73,5 +73,5 @@ bool Moodeng_Check_Play(Moodeng_t* moodeng);
 void Moodeng_Handle_Lose(Moodeng_t* moodeng);
 void Moodeng_Endgame_animation(Moodeng_t* moodeng);
 void Moodeng_Handle_Win(Moodeng_t* moodeng);
-
+void Moodeng_LoadFlashData(Moodeng_t *moodeng);
 #endif /* INC_MOODENG_H_ */

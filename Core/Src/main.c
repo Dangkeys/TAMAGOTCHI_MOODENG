@@ -439,7 +439,7 @@ void Handle_Button_Red(void)
         setIsSleeping(&moodeng, false);
         if (moodeng.sleepingTime >= 1800)
         { // seconds
-            setisTired(&moodeng, false);
+            setIsTired(&moodeng, false);
             setHappy(&moodeng, moodeng.happy + 1);
             setNextSleepyTime(&moodeng, 480);
         }
@@ -523,6 +523,7 @@ void Handle_Button_Blue(void)
             setIsSleeping(&moodeng, true);
             setActiveAnim(&ui, &sleepAnimDay);
             buzzer_play_sound(sound_sleep);
+            Moodeng_WriteFlashData(&moodeng);
         }
         else
         {
@@ -570,7 +571,6 @@ void Handle_Button_Blue(void)
             buzzer_play_sound(sound_lose);
         }
         break;
-    
     default:
         break;
     }

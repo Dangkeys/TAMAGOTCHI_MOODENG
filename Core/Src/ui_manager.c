@@ -43,7 +43,7 @@ extern Food_t foodSelected;
 #define MOODENG_Y_POS 56
 void UIManager_Init(UIManager_t *ui)
 {
-    static const uint16_t *idleFrames[] = {idle1, idle2, idle3, idle4};
+    static const uint16_t *idleFrames[] = {idle1, idle2};
     static const uint16_t *sleepFramesDay[] = {sleep_day1, sleep_day2};
     static const uint16_t *sleepFramesNight[] = {sleep_night1, sleep_night2};
     static const uint16_t *menuBarFrame[] = {menuBar};

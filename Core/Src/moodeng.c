@@ -104,30 +104,8 @@ void Moodeng_Reset(Moodeng_t *moodeng)
     Moodeng_WriteFlashData(moodeng);
 }
 
-void Moodeng_LoadFlashData(Moodeng_t *moodeng)
-{
-    moodeng->happy = (int)Flash_Read_NUM(HAPPY_ADDRESS);
-    moodeng->weight = (int)Flash_Read_NUM(WEIGHT_ADDRESS);
-    moodeng->hunger = (int)Flash_Read_NUM(HUNGER_ADDRESS);
-    moodeng->poopCount = (int)Flash_Read_NUM(POOPCOUNT_ADDRESS);
-    moodeng->poopRate = Flash_Read_NUM(POOPRATE_ADDRESS);
-    moodeng->isSick = (bool)Flash_Read_NUM(ISSICK_ADDRESS);
-    moodeng->healRate = Flash_Read_NUM(HEALRATE_ADDRESS);
-    moodeng->discipline = (int)Flash_Read_NUM(DISCIPLINE_ADDRESS);
-    moodeng->isTried = (bool)Flash_Read_NUM(ISTRIED_ADDRESS);
-    moodeng->evolution = (int)Flash_Read_NUM(EVOLUTION_ADDRESS);
-    moodeng->isAlive = (bool)Flash_Read_NUM(ISALIVE_ADDRESS);
-    moodeng->emotion = (Emotion_t)(int)Flash_Read_NUM(EMOTION_ADDRESS);
-    moodeng->nextDecayHappy = (int)Flash_Read_NUM(NEXTDECAYHAPPY_ADDRESS);
-    moodeng->nextDecayHunger = (int)Flash_Read_NUM(NEXTDECAYHUNGER_ADDRESS);
-    moodeng->nextPoopTime = (int)Flash_Read_NUM(NEXTPOOPTIME_ADDRESS);
-    moodeng->nextSickTime = (int)Flash_Read_NUM(NEXTSICKTIME_ADDRESS);
-    moodeng->nextHurtTime = (int)Flash_Read_NUM(NEXTHURTTIME_ADDRESS);
-    moodeng->nextDirtyTime = (int)Flash_Read_NUM(NEXTDIRTYTIME_ADDRESS);
-    moodeng->nextSleepyTime = (int)Flash_Read_NUM(NEXTSLEEPYTIME_ADDRESS);
-}
 
-void Moodeng_WriteFlashData(Moodeng_t *moodeng)
+void Moodeng_WriteFlashData(Moodeng_t *moodeng) 
 {
     HAL_FLASH_Unlock();
     // Erase the user Flash area
@@ -254,8 +232,6 @@ void setPoopRate(Moodeng_t *moodeng, float value)
 
 void setIsSick(Moodeng_t *moodeng, bool value)
 {
-void setIsSick(Moodeng_t *moodeng, bool value)
-{
     moodeng->isSick = value;
     // Flash_Write_NUM(ISSICK_ADDRESS, moodeng->isSick);
 }
@@ -272,7 +248,7 @@ void setDiscipline(Moodeng_t *moodeng, int value)
     // Flash_Write_NUM(DISCIPLINE_ADDRESS, moodeng->discipline);
 }
 
-void setIsTried(Moodeng_t *moodeng, bool value)
+void setIsTired(Moodeng_t *moodeng, bool value)
 {
     moodeng->isTired = value;
     // Flash_Write_NUM(ISTIRED_ADDRESS, moodeng->isTired);
@@ -284,8 +260,6 @@ void setEvolution(Moodeng_t *moodeng, int value)
     // Flash_Write_NUM(EVOLUTION_ADDRESS, moodeng->evolution);
 }
 
-void setEmotion(Moodeng_t *moodeng, Emotion_t value)
-{
 void setEmotion(Moodeng_t *moodeng, Emotion_t value)
 {
     moodeng->emotion = value;
@@ -357,15 +331,12 @@ float Moodeng_FeedingChance(Moodeng_t *moodeng)
     return moodeng->discipline * 0.17f;
 }
 
-float Moodeng_SickChance(Moodeng_t *moodeng)
-{
+
 float Moodeng_SickChance(Moodeng_t *moodeng)
 {
     return moodeng->weight * 0.0015f + moodeng->poopCount * 0.1f + moodeng->isTired * 0.40f + (0.2f - moodeng->happy * 0.05f) + (0.2f - moodeng->hunger * 0.05f);
 }
 
-float Moodeng_PlayingChance(Moodeng_t *moodeng)
-{
 float Moodeng_PlayingChance(Moodeng_t *moodeng)
 {
     return moodeng->discipline * 0.22f - moodeng->weight * 0.4f;
@@ -494,7 +465,7 @@ void Moodeng_Update(Moodeng_t *moodeng)
         setNextSleepyTime(moodeng, moodeng->nextSleepyTime - 1);
         if (moodeng->nextSleepyTime == 0)
         {
-            setisTired(moodeng, true);
+            setIsTired(moodeng, true);
             setNextSleepyTime(moodeng, MOODENG_INIT_SLEEPYTIME);
         }
     }

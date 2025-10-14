@@ -36,7 +36,7 @@ Core/Src/timer.o: ../Core/Src/timer.c ../Core/Inc/timer.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h \
  ../Core/Inc/ui_manager.h ../Core/Inc/sprite_animator.h \
- C:/Users/HP/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h
+ C:/Users/coppe/OneDrive/Documents/GitHub/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h
 ../Core/Inc/timer.h:
 ../Core/Inc/moodeng.h:
 ../Core/Inc/timer.h:
@@ -79,4 +79,4 @@ Core/Src/timer.o: ../Core/Src/timer.c ../Core/Inc/timer.h \
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h:
 ../Core/Inc/ui_manager.h:
 ../Core/Inc/sprite_animator.h:
-C:/Users/HP/STM32CubeIDE/workspace_1.19.0/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h:
+C:/Users/coppe/OneDrive/Documents/GitHub/767_SPI_ILI9341_2/Drivers/ILI9341/ILI9341_GFX.h:
