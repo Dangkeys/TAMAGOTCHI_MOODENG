@@ -425,16 +425,6 @@ void Handle_Button_Yellow(void)
         }
         break;
 
-    case MENU_SLEEP:
-        // isSleeping = confirm
-        if (moodeng.isSleeping == false)
-        {
-            setSleepingTime(&moodeng, 0);
-            setIsSleeping(&moodeng, true);
-            ui.activeAnim = &sleepAnimDay;
-        }
-        break;
-
     case MENU_CLEAN:
         setPoopCount(&moodeng, moodeng.poopCount - 1);
         break;
@@ -460,7 +450,7 @@ void Handle_Button_Red(void)
         return;
     lastTick = now;
     // exit sleeping
-    if (ui.menuState == MENU_SLEEP && moodeng.isSleeping == true)
+    if (moodeng.isSleeping == true)
     {
         setIsSleeping(&moodeng, false);
         if (moodeng.sleepingTime >= 1800)
@@ -471,8 +461,9 @@ void Handle_Button_Red(void)
         }
         setSleepingTime(&moodeng, 0);
     }
+
     // back to main menu
-    else if (ui.menuState != MENU_MAIN)
+    if (ui.menuState != MENU_MAIN)
     {
         UIManager_SetState(&ui, MENU_MAIN);
         shouldClearScreen = true;
@@ -535,6 +526,13 @@ void Handle_Button_Blue(void)
                 // Sound stubborn
                 buzzer_play_sound(sound_stubborn);
             }
+        }
+        else if (ui.selectedState == MENU_SLEEP)
+        {
+            UIManager_SetState(&ui, ui.selectedState);
+            setSleepingTime(&moodeng, 0);
+            setIsSleeping(&moodeng, true);
+            ui.activeAnim = &sleepAnimDay;
         }
         else
         {
