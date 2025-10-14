@@ -1,7 +1,7 @@
 ../Core/Src/ui_manager.c:44:6:UIManager_Init	1
 ../Core/Src/ui_manager.c:111:6:setActiveAnim	1
-../Core/Src/ui_manager.c:116:6:UIManager_SetState	9
-../Core/Src/ui_manager.c:155:6:UIManager_Update	6
-../Core/Src/ui_manager.c:197:6:drawStat	2
-../Core/Src/ui_manager.c:207:6:UIManager_Draw	4
-../Core/Src/ui_manager.c:229:6:uiManagerResetToIdle	2
+../Core/Src/ui_manager.c:116:6:UIManager_SetState	10
+../Core/Src/ui_manager.c:158:6:UIManager_Update	6
+../Core/Src/ui_manager.c:200:6:drawStat	2
+../Core/Src/ui_manager.c:210:6:UIManager_Draw	4
+../Core/Src/ui_manager.c:232:6:uiManagerResetToIdle	2

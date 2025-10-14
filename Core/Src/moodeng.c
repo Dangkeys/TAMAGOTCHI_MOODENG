@@ -29,9 +29,9 @@ uint32_t loseStart = 0;
 #define END_DECAY_HAPPY 90
 #define START_DECAY_HUNGER 45
 #define END_DECAY_HUNGER 75
-#define START_POOPTIME 10
-#define END_POOPTIME 30
-#define MOODENG_INIT_SICKTIME 30
+#define START_POOPTIME 1
+#define END_POOPTIME 1
+#define MOODENG_INIT_SICKTIME 1
 #define MOODENG_INIT_SLEEPYTIME 480
 #define MOODENG_DIRTY_TIME 30
 #define MOODENG_HURT_TIME 30
@@ -304,7 +304,7 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
     switch (moodeng->evolution)
     {
     case 0:
-        if (totalMinutes >= 10)
+        if (totalMinutes >= 1)
         {
             setEvolution(moodeng, 1);
             setDiscipline(moodeng, moodeng->discipline + 2);
@@ -314,7 +314,7 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
         break;
 
     case 1:
-        if (totalMinutes >= 180)
+        if (totalMinutes >= 2)
         {
             setEvolution(moodeng, 2);
             setDiscipline(moodeng, moodeng->discipline + 3);
@@ -324,7 +324,7 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
         break;
 
     case 2:
-        if (totalMinutes >= 360)
+        if (totalMinutes >= 3)
         {
             setEvolution(moodeng, 3);
             setDiscipline(moodeng, moodeng->discipline + 4);
@@ -364,7 +364,7 @@ void Moodeng_Update(Moodeng_t *moodeng)
         {
             float randomProb = (float)Moodeng_GenerateRandomNumber(moodeng, 0, 100) / 100.0f;
 
-            if (randomProb < moodeng->poopRate)
+            if (0 < moodeng->poopRate)
             {
                 setPoopCount(moodeng, moodeng->poopCount + 1);
                 setNextPoopTime(moodeng, -1);
@@ -384,7 +384,7 @@ void Moodeng_Update(Moodeng_t *moodeng)
         {
             float randomProb = (float)Moodeng_GenerateRandomNumber(moodeng, 0, 100) / 100.0f;
 
-            if (randomProb < Moodeng_SickChance(moodeng))
+            if (0 < Moodeng_SickChance(moodeng))
             {
                 setIsSick(moodeng, true);
                 setNextHurtTime(moodeng, MOODENG_HURT_TIME);

@@ -80,11 +80,6 @@ Moodeng_t moodeng;
 Clock_t gameClock;
 uint32_t lastUpdateTime = 0;
 
-typedef enum
-{
-    MEAL = 0,
-    SNACK
-} Food_t;
 Food_t foodSelected = MEAL;
 
 /* USER CODE END PV */

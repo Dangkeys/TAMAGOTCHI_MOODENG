@@ -40,6 +40,7 @@ typedef enum {
     MENU_SLEEP
 } MenuState_t;
 
+
 typedef struct {
     MenuState_t menuState;       // Confirmed menu (active state)
     MenuState_t selectedState;   // Currently highlighted but not confirmed

@@ -38,7 +38,7 @@ SpriteAnimator_t cleanAnim;
 extern ADC_HandleTypeDef hadc1; // From main.c or auto-generated MX_ADC1_Init()
 extern UART_HandleTypeDef huart3;
 extern Moodeng_t moodeng;
-
+extern Food_t foodSelected;
 #define MOODENG_X_POS 28
 #define MOODENG_Y_POS 56
 void UIManager_Init(UIManager_t *ui)
@@ -120,7 +120,10 @@ void UIManager_SetState(UIManager_t *ui, MenuState_t newState)
     switch (newState)
     {
     case MENU_FEED:
-        setActiveAnim(ui, &feedMealAnim);
+        if (foodSelected == SNACK)
+            setActiveAnim(ui, &feedSnackAnim);
+        else
+            setActiveAnim(ui, &feedMealAnim);
         break;
     case MENU_PLAY:
         setActiveAnim(ui, &playGameAnim);
