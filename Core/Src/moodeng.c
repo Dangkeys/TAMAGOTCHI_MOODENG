@@ -549,7 +549,7 @@ void Moodeng_Handle_Lose(Moodeng_t* moodeng)
 void Moodeng_lose_animation(Moodeng_t* moodeng)
 {
     if (moodeng->isAlive == false) {
-        if (losing && HAL_GetTick() - loseStart >= 150) {
+        if (losing && HAL_GetTick() - loseStart >= 2000) {
             losing = false;
             Moodeng_Reset(moodeng);
             Timer_Reset(&gameClock);

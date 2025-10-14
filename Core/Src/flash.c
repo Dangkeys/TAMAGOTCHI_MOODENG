@@ -250,8 +250,8 @@ void Flash_Write_NUM(uint32_t StartSectorAddress, float Num)
     HAL_FLASH_Unlock();
 
     // Determine sector number from address (example for STM32F7)
-    uint32_t SectorError;
-    FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3); // use the correct sector for your address
+//    uint32_t SectorError;
+//    FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3); // use the correct sector for your address
 
     // Program 32-bit word
     HAL_FLASH_Program(TYPEPROGRAM_WORD, StartSectorAddress, *(uint32_t *)&Num);
