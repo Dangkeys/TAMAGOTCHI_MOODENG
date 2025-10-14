@@ -559,7 +559,7 @@ void Moodeng_Handle_Win(Moodeng_t* moodeng)
     }
 }
 
-void void Moodeng_Endgame_animation(Moodeng_t* moodeng)
+void Moodeng_Endgame_animation(Moodeng_t* moodeng)
 {
     if (moodeng->isAlive == false) {
         if (losing) {
