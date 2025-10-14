@@ -550,6 +550,7 @@ void Moodeng_Handle_Lose(Moodeng_t* moodeng)
 void Moodeng_lose_animation(Moodeng_t* moodeng)
 {
     if (moodeng->isAlive == false) {
+    	buzzer_play_sound(sound_game_lose);
         if (losing && HAL_GetTick() - loseStart >= 2000) {
             losing = false;
             Moodeng_Reset(moodeng);
