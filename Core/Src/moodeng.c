@@ -11,6 +11,8 @@ extern Clock_t gameClock;
 
 bool losing = false;
 uint32_t loseStart = 0;
+bool winning = false;
+uint32_t winStart = 0;
 
 // Default starting stats (easier tuning)
 #define MOODENG_INIT_HAPPY 2
@@ -336,9 +338,7 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
     case 3:
         if (moodeng->happy == 4)
         {
-            setActiveAnim(&ui, &winAnim);
-            // Game Win
-            buzzer_play_sound(sound_game_win);
+            Moodeng_Handle_Win(moodeng);
         }
         break;
 
@@ -548,16 +548,37 @@ void Moodeng_Handle_Lose(Moodeng_t* moodeng)
     }
 }
 
-void Moodeng_lose_animation(Moodeng_t* moodeng)
+void Moodeng_Handle_Win(Moodeng_t* moodeng)
+{
+    if (moodeng->isAlive == true) {
+        setIsAlive(moodeng, false);
+        ui.activeAnim = &winAnim;
+        buzzer_play_sound(sound_game_win);
+        winning = true;
+        winStart = HAL_GetTick();
+    }
+}
+
+void void Moodeng_Endgame_animation(Moodeng_t* moodeng)
 {
     if (moodeng->isAlive == false) {
-    	buzzer_play_sound(sound_game_lose);
-        if (losing && HAL_GetTick() - loseStart >= 2000) {
-            losing = false;
-            Moodeng_Reset(moodeng);
-            Timer_Reset(&gameClock);
-            ui.menuState = MENU_MAIN;
-            setActiveAnim(&ui, &idleAnim);
+        if (losing) {
+            if (HAL_GetTick() - loseStart >= 2000) {
+                losing = false;
+                Moodeng_Reset(moodeng);
+                Timer_Reset(&gameClock);
+                ui.menuState = MENU_MAIN;
+                ui.activeAnim = &idleAnim;
+            }
+        }
+        else if (winning) {
+            if (HAL_GetTick() - winStart >= 2000) {
+                winning = false;
+                Moodeng_Reset(moodeng);
+                Timer_Reset(&gameClock);
+                ui.menuState = MENU_MAIN;
+                ui.activeAnim = &idleAnim;
+            }
         }
     }
 }

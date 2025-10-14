@@ -70,6 +70,7 @@ void Moodeng_Heal(Moodeng_t* moodeng);
 bool Moodeng_Check_Feed(Moodeng_t* moodeng);
 bool Moodeng_Check_Play(Moodeng_t* moodeng);
 void Moodeng_Handle_Lose(Moodeng_t* moodeng);
-void Moodeng_lose_animation(Moodeng_t* moodeng);
+void Moodeng_Endgame_animation(Moodeng_t* moodeng);
+void Moodeng_Handle_Win(Moodeng_t* moodeng);
 
 #endif /* INC_MOODENG_H_ */
