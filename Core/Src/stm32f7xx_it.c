@@ -62,6 +62,9 @@ extern UIManager_t ui;
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void Handle_Button_Yellow(void);
+void Handle_Button_Red(void);
+void Handle_Button_Blue(void);
 
 /* USER CODE END 0 */
 

@@ -59,6 +59,7 @@ void setIsAlive(Moodeng_t* moodeng, bool value);
 void setEmotion(Moodeng_t* moodeng, Emotion_t value);
 void setIsSleeping(Moodeng_t *moodeng, bool value);
 void setSleepingTime(Moodeng_t *moodeng, int value);
+void setNextSleepyTime(Moodeng_t *moodeng, int value);
 float Moodeng_FeedingChance(Moodeng_t* moodeng);
 float Moodeng_SickChance(Moodeng_t* moodeng);
 float Moodeng_PlayingChance(Moodeng_t* moodeng);
