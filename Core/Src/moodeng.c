@@ -297,6 +297,7 @@ float Moodeng_PlayingChance(Moodeng_t *moodeng)
 void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
 {
     if (moodeng->isAlive == false) return; 
+    if (moodeng->isSleeping == true) return; 
     int totalMinutes = (gameClock->hour * 60) + gameClock->minute;
 
     switch (moodeng->evolution)
