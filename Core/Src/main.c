@@ -435,9 +435,11 @@ void Handle_Button_Yellow(void)
 
     case MENU_CLEAN:
         setPoopCount(&moodeng, moodeng.poopCount - 1);
+        break;
 
     case MENU_MEDICINE:
         Moodeng_Heal(&moodeng);
+        break;
 
     default:
         break;
