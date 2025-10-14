@@ -551,8 +551,7 @@ void Moodeng_lose_animation(Moodeng_t* moodeng)
     if (moodeng->isAlive == false) {
         if (losing && HAL_GetTick() - loseStart >= 150) {
             losing = false;
-            Moodeng_Reset(moodeng);
-            Timer_Reset(&gameClock);
+            setIsAlive(moodeng, true);
             ui.menuState = MENU_MAIN;
             ui.activeAnim = &idleAnim;
         }
