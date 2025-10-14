@@ -16,7 +16,7 @@ void SpriteAnimator_Init(SpriteAnimator_t* anim,
                          uint8_t frameCount,
                          uint16_t x, uint16_t y,
                          uint16_t w, uint16_t h,
-                         uint32_t frameDelay)
+                         uint32_t frameDelay, bool shouldLoop)
 {
     anim->frames = frames;
     anim->frameCount = frameCount;
@@ -27,11 +27,15 @@ void SpriteAnimator_Init(SpriteAnimator_t* anim,
     anim->currentFrame = 0;
     anim->frameDelay = frameDelay;
     anim->lastFrameTime = 0;
+    anim->shouldLoop = shouldLoop;
 }
 
 void SpriteAnimator_Update(SpriteAnimator_t* anim, uint32_t currentTime)
 {
     if (currentTime - anim->lastFrameTime >= anim->frameDelay) {
+        if (anim->shouldLoop == false && anim->currentFrame == anim->frameCount - 1) {
+            return;
+        }
         anim->currentFrame = (anim->currentFrame + 1) % anim->frameCount;
         anim->lastFrameTime = currentTime;
     }

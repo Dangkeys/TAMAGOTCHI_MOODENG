@@ -37,7 +37,7 @@
 #include "ILI9341_GFX.h"
 
 #include "snow_tiger.h"
-
+#include "sprite_animator.h"
 #include "ui_manager.h"
 #include "moodeng.h"
 #include "timer.h"
@@ -66,7 +66,6 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-bool shouldClearScreen = false;
 
 // const char* stateNames[STATE_COUNT] = {
 //     "Idle",
@@ -82,11 +81,6 @@ Moodeng_t moodeng;
 Clock_t gameClock;
 uint32_t lastUpdateTime = 0;
 
-typedef enum
-{
-    MEAL = 0,
-    SNACK
-} Food_t;
 Food_t foodSelected = MEAL;
 
 /* USER CODE END PV */
@@ -165,6 +159,16 @@ void printStatus(void)
                      moodeng.sleepingTime,
                      moodeng.isSleeping);
 
+    if (n > 0)
+    {
+        HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
+    }
+}
+
+void printValue(int value)
+{
+    char msg[32];
+    int n = snprintf(msg, sizeof(msg), "Value: %02d\r\n", value);
     if (n > 0)
     {
         HAL_UART_Transmit(&huart3, (uint8_t *)msg, n, HAL_MAX_DELAY);
@@ -277,18 +281,12 @@ int main(void)
     /* USER CODE BEGIN WHILE */
     while (1)
     {
-        /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
 
-        //    if (shouldClearScreen)
-        //    {
-        //      shouldClearScreen = false;
-        //      Display_Screen();
-        //    }
-        // if (!buzzer.running){buzzer_play_sound(mario);}
 
-        printStatus();
+        //printStatus();
         uint32_t currentTime = HAL_GetTick();
 
         UIManager_Update(&ui, currentTime);
@@ -298,15 +296,6 @@ int main(void)
             UIManager_Draw(&ui);
             lastUpdateTime = currentTime;
         }
-
-        if (shouldClearScreen)
-        {
-            ILI9341_Draw_Text("Medicine", 120, 10, DARKGREY, 2, DARKGREY);
-            ILI9341_Draw_Text("Medicine", 120, 40, DARKGREY, 2, DARKGREY);
-            shouldClearScreen = false;
-        }
-
-        /* USER CODE END 3 */
     }
     /* USER CODE END 3 */
 }
@@ -369,6 +358,8 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void Handle_Button_Yellow(void)
 {
+    if (moodeng.isAlive == false) return;
+    //debounce
     static uint32_t lastTick = 0;
     uint32_t now = HAL_GetTick();
     if (now - lastTick < 200)
@@ -380,16 +371,19 @@ void Handle_Button_Yellow(void)
     case MENU_MAIN:
         // select action(menu)
         ui.selectedState = (ui.selectedState + 1) % 6;
+
         // Sound Beep
         buzzer_play_sound(sound_beep);
         // skip select main menu
         if (ui.selectedState == MENU_MAIN)
             ui.selectedState = MENU_FEED;
+        ui.selectedStateAnim->x = 24 + ((ui.selectedState - 1) * 48);
         break;
 
     case MENU_FEED:
         // select food
         foodSelected = (foodSelected == MEAL) ? SNACK : MEAL;
+        setActiveAnim(&ui, (foodSelected == MEAL) ? &feedMealAnim : &feedSnackAnim);
         // Sound Beep
         buzzer_play_sound(sound_beep);
         break;
@@ -399,59 +393,64 @@ void Handle_Button_Yellow(void)
         // return true if win
         if (Moodeng_Minigame(&moodeng, 0))
         {
-            ui.activeAnim = &miniGameCorrectAnim;
+            setActiveAnim(&ui, &miniGameCorrectAnim);
             // Sound Win
             buzzer_play_sound(sound_win);
         }
         else
         {
-            ui.activeAnim = &miniGameWrongAnim;
+            setActiveAnim(&ui, &miniGameWrongAnim);
             // Sound Lose
             buzzer_play_sound(sound_lose);
         }
         break;
 
-    case MENU_SLEEP:
-        // isSleeping = confirm
-        if (moodeng.isSleeping == false)
-        {
-            moodeng.sleepingTime = 0;
-            moodeng.isSleeping = true;
-        }
+    case MENU_CLEAN:
+        setActiveAnim(&ui, &cleanAnim);
+        setPoopCount(&moodeng, moodeng.poopCount - 1);
+        buzzer_play_sound(sound_clean_up);
+        break;
+
+    case MENU_MEDICINE:
+        setActiveAnim(&ui, &injectAnim);
+        Moodeng_Heal(&moodeng);
+        buzzer_play_sound(sound_take_medicine);
         break;
 
     default:
         break;
     }
-    shouldClearScreen = true;
+
+
 }
 
 void Handle_Button_Red(void)
 {
+    if (moodeng.isAlive == false) return;
+    //debounce
     static uint32_t lastTick = 0;
     uint32_t now = HAL_GetTick();
     if (now - lastTick < 200)
         return;
     lastTick = now;
     // exit sleeping
-    if (ui.menuState == MENU_SLEEP && moodeng.isSleeping == true)
+    if (moodeng.isSleeping == true)
     {
-        moodeng.isSleeping = false;
+        setIsSleeping(&moodeng, false);
         if (moodeng.sleepingTime >= 1800)
         { // seconds
-            moodeng.isTired = 0;
-            moodeng.happy++;
-            if (moodeng.happy > 4)
-                moodeng.happy = 4;
-            moodeng.nextSleepyTime = 480;
+            setisTired(&moodeng, false);
+            setHappy(&moodeng, moodeng.happy + 1);
+            setNextSleepyTime(&moodeng, 480);
         }
-        moodeng.sleepingTime = 0;
+        setSleepingTime(&moodeng, 0);
     }
+
     // back to main menu
-    else if (ui.menuState != MENU_MAIN)
+    if (ui.menuState != MENU_MAIN)
     {
         UIManager_SetState(&ui, MENU_MAIN);
-        shouldClearScreen = true;
+
         // Sound Beep
         buzzer_play_sound(sound_beep);
     }
@@ -460,18 +459,15 @@ void Handle_Button_Red(void)
     {
         if (moodeng.emotion != SILLY)
         {
-            moodeng.happy--;
-            if (moodeng.happy < 0)
-                moodeng.happy = 0;
+            setHappy(&moodeng, moodeng.happy - 1);
             // Sound Sad
             buzzer_play_sound(sound_sad);
         }
         else
         {
-            moodeng.discipline++;
-            if (moodeng.discipline > 6)
-                moodeng.discipline = 6;
-            moodeng.emotion = SCOLDED;
+            setDiscipline(&moodeng, moodeng.discipline + 1);
+            setEmotion(&moodeng, SCOLDED);
+            setActiveAnim(&ui, &idleAnim);
             // Sound Happy
             buzzer_play_sound(sound_happy);
         }
@@ -480,6 +476,8 @@ void Handle_Button_Red(void)
 
 void Handle_Button_Blue(void)
 {
+    if (moodeng.isAlive == false) return;
+    //debounce
     static uint32_t lastTick = 0;
     uint32_t now = HAL_GetTick();
     if (now - lastTick < 200)
@@ -497,7 +495,9 @@ void Handle_Button_Blue(void)
                 UIManager_SetState(&ui, ui.selectedState);
             else
             {
-                ui.activeAnim = &stubbornAnim;
+                setActiveAnim(&ui, &stubbornAnim);
+                ui.selectedState = MENU_MAIN;
+                ui.selectedStateAnim->x = 0;
                 // Sound stubborn
                 buzzer_play_sound(sound_stubborn);
             }
@@ -509,10 +509,20 @@ void Handle_Button_Blue(void)
                 UIManager_SetState(&ui, ui.selectedState);
             else
             {
-                ui.activeAnim = &stubbornAnim;
+                setActiveAnim(&ui, &stubbornAnim);
+                ui.selectedState = MENU_MAIN;
+                ui.selectedStateAnim->x = 0;
                 // Sound stubborn
                 buzzer_play_sound(sound_stubborn);
             }
+        }
+        else if (ui.selectedState == MENU_SLEEP)
+        {
+            UIManager_SetState(&ui, ui.selectedState);
+            setSleepingTime(&moodeng, 0);
+            setIsSleeping(&moodeng, true);
+            setActiveAnim(&ui, &sleepAnimDay);
+            buzzer_play_sound(sound_sleep);
         }
         else
         {
@@ -520,38 +530,28 @@ void Handle_Button_Blue(void)
             // Sound Beep
             buzzer_play_sound(sound_beep);
         }
-        shouldClearScreen = true;
+
         break;
 
     case MENU_FEED:
         // feed meal
         if (foodSelected == MEAL)
         {
-            ui.activeAnim = &feedMealAnim;
-            moodeng.hunger += 2;
-            moodeng.weight += 2;
-            moodeng.poopRate += 0.4f;
+            setHunger(&moodeng, moodeng.hunger + 2);
+            setWeight(&moodeng, moodeng.weight + 2);
+            setPoopRate(&moodeng, moodeng.poopRate + 0.4f);
             // Sound Eat
             buzzer_play_sound(sound_eat);
         }
         // feed snack
         else
         {
-            ui.activeAnim = &feedSnackAnim;
-            moodeng.happy += 2;
-            moodeng.weight += 4;
-            moodeng.poopRate += 0.6f;
+            setHappy(&moodeng, moodeng.happy + 2);
+            setWeight(&moodeng, moodeng.weight + 4);
+            setPoopRate(&moodeng, moodeng.poopRate + 0.6f);
             // Sound Eat
             buzzer_play_sound(sound_eat);
         }
-        if (moodeng.happy > 4)
-            moodeng.happy = 4;
-        if (moodeng.hunger > 4)
-            moodeng.hunger = 4;
-        if (moodeng.weight > 99)
-            moodeng.weight = 99;
-        if (moodeng.poopRate > 1.0f)
-            moodeng.poopRate = 1.0f;
         break;
 
     case MENU_PLAY:
@@ -559,18 +559,18 @@ void Handle_Button_Blue(void)
         // return true if win
         if (Moodeng_Minigame(&moodeng, 1))
         {
-            ui.activeAnim = &miniGameCorrectAnim;
+            setActiveAnim(&ui, &miniGameCorrectAnim);
             // Sound Win
             buzzer_play_sound(sound_win);
         }
         else
         {
-            ui.activeAnim = &miniGameWrongAnim;
+            setActiveAnim(&ui, &miniGameWrongAnim);
             // Sound Lose
             buzzer_play_sound(sound_lose);
         }
         break;
-
+    
     default:
         break;
     }
@@ -627,31 +627,31 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 /* USER CODE END 4 */
 
 /**
- * @brief  This function is executed in case of error occurrence.
- * @retval None
- */
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
 void Error_Handler(void)
 {
-    /* USER CODE BEGIN Error_Handler_Debug */
+  /* USER CODE BEGIN Error_Handler_Debug */
     /* User can add his own implementation to report the HAL error return state */
     while (1)
     {
     }
-    /* USER CODE END Error_Handler_Debug */
+  /* USER CODE END Error_Handler_Debug */
 }
 #ifdef USE_FULL_ASSERT
 /**
- * @brief  Reports the name of the source file and the source line number
- *         where the assert_param error has occurred.
- * @param  file: pointer to the source file name
- * @param  line: assert_param error line source number
- * @retval None
- */
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-    /* USER CODE BEGIN 6 */
+  /* USER CODE BEGIN 6 */
     /* User can add his own implementation to report the file name and line number,
        tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-    /* USER CODE END 6 */
+  /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

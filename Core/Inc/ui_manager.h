@@ -21,13 +21,15 @@ extern SpriteAnimator_t feedSnackAnim;
 extern SpriteAnimator_t feedMealAnim;
 extern SpriteAnimator_t playGameAnim;
 extern SpriteAnimator_t medicineAnim;
-extern SpriteAnimator_t cleanAnim;
+extern SpriteAnimator_t showerAnim;
 extern SpriteAnimator_t winAnim;
 extern SpriteAnimator_t loseAnim;
 extern SpriteAnimator_t miniGameCorrectAnim;
 extern SpriteAnimator_t miniGameWrongAnim;
 extern SpriteAnimator_t sickAnim;
 extern SpriteAnimator_t stubbornAnim;
+extern SpriteAnimator_t injectAnim;
+extern SpriteAnimator_t cleanAnim;
 
 typedef enum {
     MENU_MAIN = 0,
@@ -38,6 +40,7 @@ typedef enum {
     MENU_SLEEP
 } MenuState_t;
 
+
 typedef struct {
     MenuState_t menuState;       // Confirmed menu (active state)
     MenuState_t selectedState;   // Currently highlighted but not confirmed
@@ -45,6 +48,8 @@ typedef struct {
     SpriteAnimator_t* menuBarAnim;
     SpriteAnimator_t* heartAnim;
     SpriteAnimator_t* hungerAnim;
+    SpriteAnimator_t* shitAnim;
+    SpriteAnimator_t* evolutionAnim;
     SpriteAnimator_t* selectedStateAnim;
     uint16_t lightLevel;         // Store latest LDR ADC value
     bool isLightOn;              // Cached state (to avoid flickering)
@@ -56,5 +61,7 @@ void UIManager_SetState(UIManager_t* ui, MenuState_t newState);
 void UIManager_Update(UIManager_t* ui, uint32_t currentTime);
 void UIManager_Draw(UIManager_t* ui);
 void UIManager_Display_text(UIManager_t* ui,bool shouldClear);
+void setActiveAnim(UIManager_t *ui, SpriteAnimator_t *anim);
+void uiManagerResetToIdle(UIManager_t *ui);
 
 #endif /* INC_UI_MANAGER_H_ */
