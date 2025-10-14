@@ -63,70 +63,70 @@ static uint32_t GetSector(uint32_t Address)
     {
         sector = FLASH_SECTOR_7;
     }
-    /*  else if((Address < 0x0809FFFF) && (Address >= 0x08080000))
-      {
-        sector = FLASH_SECTOR_8;
-      }
-      else if((Address < 0x080BFFFF) && (Address >= 0x080A0000))
-      {
-        sector = FLASH_SECTOR_9;
-      }
-      else if((Address < 0x080DFFFF) && (Address >= 0x080C0000))
-      {
-        sector = FLASH_SECTOR_10;
-      }
-      else if((Address < 0x080FFFFF) && (Address >= 0x080E0000))
-      {
-        sector = FLASH_SECTOR_11;
-      }
-      else if((Address < 0x08103FFF) && (Address >= 0x08100000))
-      {
-        sector = FLASH_SECTOR_12;
-      }
-      else if((Address < 0x08107FFF) && (Address >= 0x08104000))
-      {
-        sector = FLASH_SECTOR_13;
-      }
-      else if((Address < 0x0810BFFF) && (Address >= 0x08108000))
-      {
-        sector = FLASH_SECTOR_14;
-      }
-      else if((Address < 0x0810FFFF) && (Address >= 0x0810C000))
-      {
-        sector = FLASH_SECTOR_15;
-      }
-      else if((Address < 0x0811FFFF) && (Address >= 0x08110000))
-      {
-        sector = FLASH_SECTOR_16;
-      }
-      else if((Address < 0x0813FFFF) && (Address >= 0x08120000))
-      {
-        sector = FLASH_SECTOR_17;
-      }
-      else if((Address < 0x0815FFFF) && (Address >= 0x08140000))
-      {
-        sector = FLASH_SECTOR_18;
-      }
-      else if((Address < 0x0817FFFF) && (Address >= 0x08160000))
-      {
-        sector = FLASH_SECTOR_19;
-      }
-      else if((Address < 0x0819FFFF) && (Address >= 0x08180000))
-      {
-        sector = FLASH_SECTOR_20;
-      }
-      else if((Address < 0x081BFFFF) && (Address >= 0x081A0000))
-      {
-        sector = FLASH_SECTOR_21;
-      }
-      else if((Address < 0x081DFFFF) && (Address >= 0x081C0000))
-      {
-        sector = FLASH_SECTOR_22;
-      }
-      else if (Address < 0x081FFFFF) && (Address >= 0x081E0000)
-      {
-        sector = FLASH_SECTOR_23;
-      }*/
+    // else if ((Address < 0x0809FFFF) && (Address >= 0x08080000))
+    // {
+    //     sector = FLASH_SECTOR_8;
+    // }
+    // else if ((Address < 0x080BFFFF) && (Address >= 0x080A0000))
+    // {
+    //     sector = FLASH_SECTOR_9;
+    // }
+    // else if ((Address < 0x080DFFFF) && (Address >= 0x080C0000))
+    // {
+    //     sector = FLASH_SECTOR_10;
+    // }
+    // else if ((Address < 0x080FFFFF) && (Address >= 0x080E0000))
+    // {
+    //     sector = FLASH_SECTOR_11;
+    // }
+    // else if ((Address < 0x08103FFF) && (Address >= 0x08100000))
+    // {
+    //     sector = FLASH_SECTOR_12;
+    // }
+    // else if ((Address < 0x08107FFF) && (Address >= 0x08104000))
+    // {
+    //     sector = FLASH_SECTOR_13;
+    // }
+    // else if ((Address < 0x0810BFFF) && (Address >= 0x08108000))
+    // {
+    //     sector = FLASH_SECTOR_14;
+    // }
+    // else if ((Address < 0x0810FFFF) && (Address >= 0x0810C000))
+    // {
+    //     sector = FLASH_SECTOR_15;
+    // }
+    // else if ((Address < 0x0811FFFF) && (Address >= 0x08110000))
+    // {
+    //     sector = FLASH_SECTOR_16;
+    // }
+    // else if ((Address < 0x0813FFFF) && (Address >= 0x08120000))
+    // {
+    //     sector = FLASH_SECTOR_17;
+    // }
+    // else if ((Address < 0x0815FFFF) && (Address >= 0x08140000))
+    // {
+    //     sector = FLASH_SECTOR_18;
+    // }
+    // else if ((Address < 0x0817FFFF) && (Address >= 0x08160000))
+    // {
+    //     sector = FLASH_SECTOR_19;
+    // }
+    // else if ((Address < 0x0819FFFF) && (Address >= 0x08180000))
+    // {
+    //     sector = FLASH_SECTOR_20;
+    // }
+    // else if ((Address < 0x081BFFFF) && (Address >= 0x081A0000))
+    // {
+    //     sector = FLASH_SECTOR_21;
+    // }
+    // else if ((Address < 0x081DFFFF) && (Address >= 0x081C0000))
+    // {
+    //     sector = FLASH_SECTOR_22;
+    // }
+    // else if ((Address < 0x081FFFFF) && (Address >= 0x081E0000))
+    // {
+    //     sector = FLASH_SECTOR_23;
+    // }
     return sector;
 }
 
@@ -245,30 +245,21 @@ void Convert_To_Str(uint32_t *Data, char *Buf)
     }
 }
 
-void Flash_Write_NUM(uint32_t StartSectorAddress, float Num)
+void Flash_Write_NUM(uint32_t StartSectorAddress, uint16_t Num)
 {
-    HAL_FLASH_Unlock();
-
-    // Determine sector number from address (example for STM32F7)
-//    uint32_t SectorError;
-//    FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3); // use the correct sector for your address
-
     // Program 32-bit word
-    HAL_FLASH_Program(TYPEPROGRAM_WORD, StartSectorAddress, *(uint32_t *)&Num);
-
-    HAL_FLASH_Lock();
+    HAL_FLASH_Program(TYPEPROGRAM_HALFWORD, StartSectorAddress, Num);
 }
 
-float Flash_Read_NUM(uint32_t StartSectorAddress)
+uint16_t Flash_Read_NUM(uint32_t StartSectorAddress)
 {
-    uint32_t data = *(__IO uint32_t *)StartSectorAddress;
-    return *(float *)&data;
+    return *(__IO uint16_t *)StartSectorAddress;
 }
 
 bool Flash_IsDataValid(uint32_t StartSectorAddress)
 {
-    uint32_t data = *(__IO uint32_t *)StartSectorAddress;
-    if (data == 0xFFFFFFFF || data == 0x00000000) // Assuming erased state is all 1s or all 0s
+    uint16_t data = *(__IO uint16_t *)StartSectorAddress;
+    if (data == 0xFFFF || data == 0x0000) // Assuming erased state is all 1s or all 0s
     {
         return false; // Data is not valid
     }

@@ -1,5 +1,31 @@
 ../Drivers/CMSIS/Include/core_cm7.h:2229:22:SCB_EnableICache	1
 ../Drivers/CMSIS/Include/core_cm7.h:2281:22:SCB_EnableDCache	3
+<<<<<<< HEAD
+<<<<<<< HEAD
+../Core/Src/main.c:99:13:print_adc_line	2
+../Core/Src/main.c:123:6:printStart	2
+../Core/Src/main.c:133:6:printHunger	2
+../Core/Src/main.c:143:6:printHappy	2
+../Core/Src/main.c:153:6:printBool	3
+../Core/Src/main.c:163:6:HAL_ADC_ConvCpltCallback	2
+../Core/Src/main.c:175:6:HAL_GPIO_EXTI_Callback	2
+../Core/Src/main.c:190:5:main	1
+../Core/Src/main.c:305:6:SystemClock_Config	4
+../Core/Src/main.c:365:6:Error_Handler	1
+=======
+../Core/Src/main.c:100:6:printStatus	2
+../Core/Src/main.c:151:6:printValue	2
+../Core/Src/main.c:161:6:printTime	2
+../Core/Src/main.c:171:6:HAL_GPIO_EXTI_Callback	5
+../Core/Src/main.c:202:5:main	3
+../Core/Src/main.c:312:8:SystemClock_Config	4
+../Core/Src/main.c:366:6:Handle_Button_Yellow	8
+../Core/Src/main.c:405:6:Handle_Button_Red	4
+../Core/Src/main.c:426:6:Handle_Button_Blue	12
+../Core/Src/main.c:490:6:HAL_TIM_PeriodElapsedCallback	9
+../Core/Src/main.c:540:8:Error_Handler	1
+>>>>>>> 04788701ac689c06132966b01dfcb2eb97539b8f
+=======
 ../Core/Src/main.c:94:6:printStatus	6
 ../Core/Src/main.c:167:6:printValue	2
 ../Core/Src/main.c:177:6:HAL_GPIO_EXTI_Callback	7
@@ -10,3 +36,4 @@
 ../Core/Src/main.c:479:6:Handle_Button_Blue	14
 ../Core/Src/main.c:581:6:HAL_TIM_PeriodElapsedCallback	9
 ../Core/Src/main.c:635:6:Error_Handler	1
+>>>>>>> c26442993c72230cacafee468183a6db89a824a0
