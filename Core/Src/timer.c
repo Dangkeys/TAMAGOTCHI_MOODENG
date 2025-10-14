@@ -13,9 +13,12 @@ void Timer_Init(Clock_t* gameClock) {
 }
 
 void Timer_Update(Clock_t* gameClock) {
+    if (moodeng.isAlive == false) {
+        Moodeng_lose_animation(&moodeng);
+    }
     gameClock->second++;
-    if (moodeng.isSleeping == true){
-        if (ui.isLightOn == false) moodeng.sleepingTime++;
+    if (moodeng.isSleeping == true) {
+        if (ui.isLightOn == false) setSleepingTime(&moodeng, moodeng.sleepingTime + 1);
     }
 
     if (gameClock->second >= 60) {

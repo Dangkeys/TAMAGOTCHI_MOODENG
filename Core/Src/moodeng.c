@@ -7,6 +7,9 @@
 #include "flash.h"
 extern UIManager_t ui;
 
+bool losing = false;
+uint32_t loseStart = 0;
+
 // Default starting stats (easier tuning)
 #define MOODENG_INIT_HAPPY 2
 #define MOODENG_INIT_WEIGHT 5
@@ -126,64 +129,54 @@ int Moodeng_GenerateRandomNumber(Moodeng_t *moodeng, int start, int end)
     return start + (randomNum % (end - start + 1));
 }
 
-bool inRangeInt(int value, int min, int max)
+int inRangeInt(int value, int min, int max)
 {
-    return value >= min && value <= max;
+    if (value > max) return max;
+    if (value < min) return min;
+    return value;
 }
 
-bool inRangeFloat(float value, float min, float max)
+float inRangeFloat(float value, float min, float max)
 {
-    return value >= min && value <= max;
+    if (value > max) return max;
+    if (value < min) return min;
+    return value;
 }
 
 void setHappy(Moodeng_t *moodeng, int emotion)
 {
-    if (inRangeInt(emotion, 0, 4))
-        if (inRangeInt(emotion, 0, 4))
-        {
-            moodeng->happy = emotion;
-            Flash_Write_NUM(HAPPY_ADDRESS, (float)moodeng->happy);
-        }
+    moodeng->happy = inRangeInt(emotion, 0, 4);
+    if (moodeng->happy == 0) {
+        Moodeng_Handle_Lose(moodeng);
+    }
+    Flash_Write_NUM(HAPPY_ADDRESS, (float)moodeng->happy);
 }
 
 void setWeight(Moodeng_t *moodeng, int value)
 {
-    if (inRangeInt(value, 5, 99))
-        if (inRangeInt(value, 5, 99))
-        {
-            moodeng->weight = value;
-            Flash_Write_NUM(WEIGHT_ADDRESS, (float)moodeng->weight);
-        }
+    moodeng->weight = inRangeInt(value, 5, 99);
+    Flash_Write_NUM(WEIGHT_ADDRESS, (float)moodeng->weight);
 }
 
 void setHunger(Moodeng_t *moodeng, int value)
 {
-    if (inRangeInt(value, 0, 4))
-        if (inRangeInt(value, 0, 4))
-        {
-            moodeng->hunger = value;
-            Flash_Write_NUM(HUNGER_ADDRESS, (float)moodeng->hunger);
-        }
+    moodeng->hunger = inRangeInt(value, 0, 4);
+    if (moodeng->hunger == 0) {
+        Moodeng_Handle_Lose(moodeng);
+    }
+    Flash_Write_NUM(HUNGER_ADDRESS, (float)moodeng->hunger);
 }
 
 void setPoopCount(Moodeng_t *moodeng, int value)
 {
-    if (inRangeInt(value, 0, 6))
-        if (inRangeInt(value, 0, 6))
-        {
-            moodeng->poopCount = value;
-            Flash_Write_NUM(POOPCOUNT_ADDRESS, (float)moodeng->poopCount);
-        }
+    moodeng->poopCount = inRangeInt(value, 0, 6);
+    Flash_Write_NUM(POOPCOUNT_ADDRESS, (float)moodeng->poopCount);
 }
 
 void setPoopRate(Moodeng_t *moodeng, float value)
 {
-    if (inRangeFloat(value, 0.0f, 1.0f))
-        if (inRangeFloat(value, 0.0f, 1.0f))
-        {
-            moodeng->poopRate = value;
-            Flash_Write_NUM(POOPRATE_ADDRESS, moodeng->poopRate);
-        }
+    moodeng->poopRate = inRangeFloat(value, 0.0f, 1.0f);
+    Flash_Write_NUM(POOPRATE_ADDRESS, moodeng->poopRate);
 }
 
 void setIsSick(Moodeng_t *moodeng, bool value)
@@ -194,22 +187,14 @@ void setIsSick(Moodeng_t *moodeng, bool value)
 
 void setHealRate(Moodeng_t *moodeng, float value)
 {
-    if (inRangeFloat(value, 0.0f, 1.0f))
-        if (inRangeFloat(value, 0.0f, 1.0f))
-        {
-            moodeng->healRate = value;
-            Flash_Write_NUM(HEALRATE_ADDRESS, moodeng->healRate);
-        }
+    moodeng->healRate = inRangeFloat(value, 0.0f, 1.0f);
+    Flash_Write_NUM(HEALRATE_ADDRESS, moodeng->healRate);
 }
 
 void setDiscipline(Moodeng_t *moodeng, int value)
 {
-    if (inRangeInt(value, 0, 6))
-        if (inRangeInt(value, 0, 6))
-        {
-            moodeng->discipline = value;
-            Flash_Write_NUM(DISCIPLINE_ADDRESS, (float)moodeng->discipline);
-        }
+    moodeng->discipline = inRangeInt(value, 0, 6);
+    Flash_Write_NUM(DISCIPLINE_ADDRESS, (float)moodeng->discipline);
 }
 
 void setisTired(Moodeng_t *moodeng, bool value)
@@ -220,12 +205,8 @@ void setisTired(Moodeng_t *moodeng, bool value)
 
 void setEvolution(Moodeng_t *moodeng, int value)
 {
-    if (inRangeInt(value, 0, 3))
-        if (inRangeInt(value, 0, 3))
-        {
-            moodeng->evolution = value;
-            Flash_Write_NUM(EVOLUTION_ADDRESS, (float)moodeng->evolution);
-        }
+    moodeng->evolution = inRangeInt(value, 0, 3);
+    Flash_Write_NUM(EVOLUTION_ADDRESS, (float)moodeng->evolution);
 }
 
 void setEmotion(Moodeng_t *moodeng, Emotion_t value)
@@ -294,8 +275,6 @@ void setIsSleeping(Moodeng_t *moodeng, bool value)
     Flash_Write_NUM(ISSLEEPING_ADDRESS, (float)moodeng->isSleeping);
 }
 
-
-
 float Moodeng_FeedingChance(Moodeng_t *moodeng)
 {
     return moodeng->discipline * 0.17f;
@@ -313,6 +292,7 @@ float Moodeng_PlayingChance(Moodeng_t *moodeng)
 
 void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
 {
+    if (moodeng->isAlive == false) return; 
     int totalMinutes = (gameClock->hour * 60) + gameClock->minute;
 
     switch (moodeng->evolution)
@@ -361,32 +341,11 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
     }
 }
 
-static void Moodeng_HandleDecay(int *timer, int *stat, int minRand, int maxRand, Moodeng_t *moodeng)
-{
-    if (*timer > 0)
-    {
-        (*timer)--;
-        if (*timer == 0)
-        {
-            (*stat)--;
-            if (*stat <= 0)
-            {
-                *stat = 0;
-                setIsAlive(moodeng, false);
-                ui.activeAnim = &loseAnim;
-                // Sound game lose
-                buzzer_play_sound(sound_game_lose);
-            }
-            *timer = Moodeng_GenerateRandomNumber(moodeng, minRand, maxRand);
-        }
-    }
-}
-
 void Moodeng_Update(Moodeng_t *moodeng)
 {
-    // skip when sleep
-    if (moodeng->isSleeping)
-        return;
+    // skip when sleep / die
+    if (moodeng->isSleeping) return;
+    if (moodeng->isAlive == false) return;
     // poop
     if (moodeng->nextPoopTime == -1 && moodeng->poopRate > 0.0f)
     {
@@ -468,8 +427,25 @@ void Moodeng_Update(Moodeng_t *moodeng)
         }
     }
     // Happy, Hunger
-    Moodeng_HandleDecay(&moodeng->nextDecayHappy, &moodeng->happy, START_DECAY_HAPPY, END_DECAY_HAPPY, moodeng);
-    Moodeng_HandleDecay(&moodeng->nextDecayHunger, &moodeng->hunger, START_DECAY_HUNGER, END_DECAY_HUNGER, moodeng);
+    if (moodeng->nextDecayHappy > 0)
+    {
+        setNextDecayHappy(moodeng, moodeng->nextDecayHappy - 1);
+        if (moodeng->nextDecayHappy == 0)
+        {
+            setHappy(moodeng, moodeng->happy - 1);
+            setNextDecayHappy(moodeng, Moodeng_GenerateRandomNumber(moodeng, START_DECAY_HAPPY, END_DECAY_HAPPY));
+        }
+    }
+
+    if (moodeng->nextDecayHunger > 0)
+    {
+        setNextDecayHunger(moodeng, moodeng->nextDecayHunger - 1);
+        if (moodeng->nextDecayHunger == 0)
+        {
+            setHunger(moodeng, moodeng->hunger - 1);
+            setNextDecayHunger(moodeng, Moodeng_GenerateRandomNumber(moodeng, START_DECAY_HUNGER, END_DECAY_HUNGER));
+        }
+    }
 }
 
 bool Moodeng_Minigame(Moodeng_t *moodeng, int guess)
@@ -552,5 +528,29 @@ bool Moodeng_Check_Play(Moodeng_t *moodeng)
     {
         setEmotion(moodeng, SILLY);
         return false;
+    }
+}
+
+void Moodeng_Handle_Lose(Moodeng_t* moodeng) 
+{
+    if (moodeng->isAlive == true) {
+        setIsAlive(moodeng, false);
+        ui.activeAnim = &loseAnim;
+        buzzer_play_sound(sound_game_lose);
+        losing = true;
+        loseStart = HAL_GetTick();
+    }
+}
+
+void Moodeng_lose_animation(Moodeng_t* moodeng)
+{
+    if (moodeng->isAlive == false) {
+        if (losing && HAL_GetTick() - loseStart >= 2000) {
+            losing = false;
+            Moodeng_Reset(moodeng);
+            Timer_Reset(&gameClock);
+            ui.menuState = MENU_MAIN;
+            ui.activeAnim = &idleAnim;
+        }
     }
 }

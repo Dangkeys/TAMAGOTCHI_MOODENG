@@ -298,8 +298,7 @@ int main(void)
         //    }
         // if (!buzzer.running){buzzer_play_sound(mario);}
 
-        printStatus();
-        HAL_Delay(100);
+        //printStatus();
         uint32_t currentTime = HAL_GetTick();
 
         UIManager_Update(&ui, currentTime);
@@ -379,6 +378,8 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void Handle_Button_Yellow(void)
 {
+    if (moodeng.isAlive == false) return;
+    //debounce
     static uint32_t lastTick = 0;
     uint32_t now = HAL_GetTick();
     if (now - lastTick < 200)
@@ -441,6 +442,8 @@ void Handle_Button_Yellow(void)
 
 void Handle_Button_Red(void)
 {
+    if (moodeng.isAlive == false) return;
+    //debounce
     static uint32_t lastTick = 0;
     uint32_t now = HAL_GetTick();
     if (now - lastTick < 200)
@@ -487,6 +490,8 @@ void Handle_Button_Red(void)
 
 void Handle_Button_Blue(void)
 {
+    if (moodeng.isAlive == false) return;
+    //debounce
     static uint32_t lastTick = 0;
     uint32_t now = HAL_GetTick();
     if (now - lastTick < 200)
