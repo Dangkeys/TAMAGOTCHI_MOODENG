@@ -50,7 +50,6 @@ extern Moodeng_t moodeng;
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 
-extern bool shouldClearScreen;
 
 extern UIManager_t ui;
 /* USER CODE END PV */

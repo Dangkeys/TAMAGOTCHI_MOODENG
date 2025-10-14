@@ -1,4 +1,4 @@
 ../Core/Src/sprite_animator.c:14:6:SpriteAnimator_Init	24	static
-../Core/Src/sprite_animator.c:32:6:SpriteAnimator_Update	16	static
-../Core/Src/sprite_animator.c:52:6:ILI9341_Draw_PartImage	48	static
-../Core/Src/sprite_animator.c:88:6:SpriteAnimator_Draw	32	static
+../Core/Src/sprite_animator.c:33:6:SpriteAnimator_Update	16	static
+../Core/Src/sprite_animator.c:56:6:ILI9341_Draw_PartImage	48	static
+../Core/Src/sprite_animator.c:92:6:SpriteAnimator_Draw	32	static

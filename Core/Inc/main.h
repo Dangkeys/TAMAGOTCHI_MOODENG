@@ -37,7 +37,11 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+typedef enum
+{
+    MEAL = 0,
+    SNACK
+} Food_t;
 #define STATE_COUNT 6
 #define BACKGROUND_COLOR DARKGREY
 
