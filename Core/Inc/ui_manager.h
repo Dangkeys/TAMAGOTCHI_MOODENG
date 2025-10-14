@@ -28,7 +28,6 @@ extern SpriteAnimator_t miniGameCorrectAnim;
 extern SpriteAnimator_t miniGameWrongAnim;
 extern SpriteAnimator_t sickAnim;
 extern SpriteAnimator_t stubbornAnim;
-
 typedef enum {
     MENU_MAIN = 0,
     MENU_FEED,
@@ -45,6 +44,8 @@ typedef struct {
     SpriteAnimator_t* menuBarAnim;
     SpriteAnimator_t* heartAnim;
     SpriteAnimator_t* hungerAnim;
+    SpriteAnimator_t* shitAnim;
+    SpriteAnimator_t* evolutionAnim;
     SpriteAnimator_t* selectedStateAnim;
     uint16_t lightLevel;         // Store latest LDR ADC value
     bool isLightOn;              // Cached state (to avoid flickering)

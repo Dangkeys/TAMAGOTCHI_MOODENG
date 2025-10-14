@@ -39,4 +39,6 @@ extern const uint16_t playGame1[];
 extern const uint16_t selectState1[];
 extern const uint16_t heart1[];
 extern const uint16_t hunger1[];
+extern const uint16_t shit1[];
+extern const uint16_t evolution1[];
 #endif /* INC_PET_SPRITES_H_ */
