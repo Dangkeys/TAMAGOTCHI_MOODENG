@@ -335,13 +335,6 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
         }
         break;
 
-    case 3:
-        if (moodeng->happy == 4)
-        {
-            Moodeng_Handle_Win(moodeng);
-        }
-        break;
-
     default:
         break;
     }
