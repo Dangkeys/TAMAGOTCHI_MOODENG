@@ -150,6 +150,7 @@ void setHappy(Moodeng_t *moodeng, int emotion)
     moodeng->happy = inRangeInt(emotion, 0, 4);
     if (moodeng->happy == 0) {
         Moodeng_Handle_Lose(moodeng);
+        return;
     }
     Flash_Write_NUM(HAPPY_ADDRESS, (float)moodeng->happy);
 }
@@ -165,6 +166,7 @@ void setHunger(Moodeng_t *moodeng, int value)
     moodeng->hunger = inRangeInt(value, 0, 4);
     if (moodeng->hunger == 0) {
         Moodeng_Handle_Lose(moodeng);
+        return;
     }
     Flash_Write_NUM(HUNGER_ADDRESS, (float)moodeng->hunger);
 }
