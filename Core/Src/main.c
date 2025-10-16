@@ -252,8 +252,8 @@ int main(void)
     MX_TIM3_Init();
 
     /* USER CODE BEGIN 2 */
-    Moodeng_Init(&moodeng);
     Timer_Init(&gameClock);
+    Moodeng_Init(&moodeng);
     ILI9341_Init(); // initial driver setup to drive ili9341
     ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
     ILI9341_Fill_Screen(DARKGREY);

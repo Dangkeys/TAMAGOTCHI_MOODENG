@@ -75,6 +75,9 @@ void Moodeng_LoadFlashData(Moodeng_t *moodeng)
     moodeng->nextSleepyTime = (int)Flash_Read_NUM(NEXTSLEEPYTIME_ADDRESS);
     moodeng->sleepingTime = (int)Flash_Read_NUM(SLEEPINGTIME_ADDRESS);
     moodeng->isSleeping = (bool)Flash_Read_NUM(ISSLEEPING_ADDRESS);
+    gameClock.hour = (int)Flash_Read_NUM(GAMECLOCK_HOUR_ADDRESS);
+    gameClock.minute = (int)Flash_Read_NUM(GAMECLOCK_MINUTE_ADDRESS);
+    gameClock.second = (int)Flash_Read_NUM(GAMECLOCK_SECOND_ADDRESS);
 }
 
 void Moodeng_Reset(Moodeng_t *moodeng)
@@ -170,6 +173,9 @@ void Moodeng_WriteFlashData(Moodeng_t *moodeng)
     Flash_Write_NUM(NEXTSLEEPYTIME_ADDRESS, moodeng->nextSleepyTime);
     Flash_Write_NUM(SLEEPINGTIME_ADDRESS, moodeng->sleepingTime);
     Flash_Write_NUM(ISSLEEPING_ADDRESS, moodeng->isSleeping);
+    Flash_Write_NUM(GAMECLOCK_HOUR_ADDRESS, gameClock.hour);
+    Flash_Write_NUM(GAMECLOCK_MINUTE_ADDRESS, gameClock.minute);
+    Flash_Write_NUM(GAMECLOCK_SECOND_ADDRESS, gameClock.second);
     HAL_FLASH_Lock();
 }
 
@@ -377,6 +383,14 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
             setDiscipline(moodeng, moodeng->discipline + 4);
             // Sound Evolution
             buzzer_play_sound(sound_evolution);
+        }
+        break;
+    case 3:
+        if (moodeng->happy == 4)
+        {
+            setActiveAnim(&ui, &winAnim);
+            // Game Win
+            buzzer_play_sound(sound_game_win);
         }
         break;
 
@@ -603,8 +617,8 @@ void Moodeng_Endgame_animation(Moodeng_t* moodeng)
         if (losing) {
             if (HAL_GetTick() - loseStart >= 2000) {
                 losing = false;
-                Moodeng_Reset(moodeng);
                 Timer_Reset(&gameClock);
+                Moodeng_Reset(moodeng);
                 ui.menuState = MENU_MAIN;
                 ui.activeAnim = &idleAnim;
             }
@@ -612,8 +626,8 @@ void Moodeng_Endgame_animation(Moodeng_t* moodeng)
         else if (winning) {
             if (HAL_GetTick() - winStart >= 2000) {
                 winning = false;
-                Moodeng_Reset(moodeng);
                 Timer_Reset(&gameClock);
+                Moodeng_Reset(moodeng);
                 ui.menuState = MENU_MAIN;
                 ui.activeAnim = &idleAnim;
             }
