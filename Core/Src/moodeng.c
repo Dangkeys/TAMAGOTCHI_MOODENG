@@ -379,6 +379,14 @@ void checkEvolution(Moodeng_t *moodeng, Clock_t *gameClock)
             buzzer_play_sound(sound_evolution);
         }
         break;
+    case 3:
+        if (moodeng->happy == 4)
+        {
+            setActiveAnim(&ui, &winAnim);
+            // Game Win
+            buzzer_play_sound(sound_game_win);
+        }
+        break;
 
     default:
         break;
