@@ -3174,7 +3174,7 @@ void Moodeng_Reset(Moodeng_t *moodeng)
  80017d4:	4602      	mov	r2, r0
  80017d6:	687b      	ldr	r3, [r7, #4]
  80017d8:	631a      	str	r2, [r3, #48]	@ 0x30
-    moodeng->nextPoopTime = -1;
+    moodeng->nextPoopTime = 0;
  80017da:	687b      	ldr	r3, [r7, #4]
  80017dc:	f04f 32ff 	mov.w	r2, #4294967295
  80017e0:	635a      	str	r2, [r3, #52]	@ 0x34
@@ -3182,11 +3182,11 @@ void Moodeng_Reset(Moodeng_t *moodeng)
  80017e2:	687b      	ldr	r3, [r7, #4]
  80017e4:	221e      	movs	r2, #30
  80017e6:	639a      	str	r2, [r3, #56]	@ 0x38
-    moodeng->nextHurtTime = -1;
+    moodeng->nextHurtTime = 0;
  80017e8:	687b      	ldr	r3, [r7, #4]
  80017ea:	f04f 32ff 	mov.w	r2, #4294967295
  80017ee:	63da      	str	r2, [r3, #60]	@ 0x3c
-    moodeng->nextDirtyTime = -1;
+    moodeng->nextDirtyTime = 0;
  80017f0:	687b      	ldr	r3, [r7, #4]
  80017f2:	f04f 32ff 	mov.w	r2, #4294967295
  80017f6:	641a      	str	r2, [r3, #64]	@ 0x40
@@ -3214,7 +3214,7 @@ void Moodeng_Reset(Moodeng_t *moodeng)
 0800181c <Moodeng_WriteFlashData>:
 
 
-void Moodeng_WriteFlashData(Moodeng_t *moodeng)
+void Moodeng_WriteFlashData(Moodeng_t *moodeng) 
 {
  800181c:	b580      	push	{r7, lr}
  800181e:	b08a      	sub	sp, #40	@ 0x28
@@ -4395,7 +4395,7 @@ void Moodeng_Update(Moodeng_t *moodeng)
  8002070:	2b00      	cmp	r3, #0
  8002072:	f040 8165 	bne.w	8002340 <Moodeng_Update+0x2f0>
     // poop
-    if (moodeng->nextPoopTime == -1 && moodeng->poopRate > 0.0f)
+    if (moodeng->nextPoopTime == 0 && moodeng->poopRate > 0.0f)
  8002076:	687b      	ldr	r3, [r7, #4]
  8002078:	6b5b      	ldr	r3, [r3, #52]	@ 0x34
  800207a:	f1b3 3fff 	cmp.w	r3, #4294967295
@@ -4461,7 +4461,7 @@ void Moodeng_Update(Moodeng_t *moodeng)
  80020fa:	4619      	mov	r1, r3
  80020fc:	6878      	ldr	r0, [r7, #4]
  80020fe:	f7ff fd76 	bl	8001bee <setPoopCount>
-                setNextPoopTime(moodeng, -1);
+                setNextPoopTime(moodeng, 0);
  8002102:	f04f 31ff 	mov.w	r1, #4294967295
  8002106:	6878      	ldr	r0, [r7, #4]
  8002108:	f7ff fe34 	bl	8001d74 <setNextPoopTime>
@@ -4614,7 +4614,7 @@ void Moodeng_Update(Moodeng_t *moodeng)
         }
     }
     // dirty
-    if (moodeng->poopCount >= 2 && moodeng->nextDirtyTime == -1)
+    if (moodeng->poopCount >= 2 && moodeng->nextDirtyTime == 0)
  800221e:	687b      	ldr	r3, [r7, #4]
  8002220:	68db      	ldr	r3, [r3, #12]
  8002222:	2b01      	cmp	r3, #1
@@ -6552,9 +6552,9 @@ void MX_TIM1_Init(void)
  8002d42:	4b20      	ldr	r3, [pc, #128]	@ (8002dc4 <MX_TIM1_Init+0xa0>)
  8002d44:	4a20      	ldr	r2, [pc, #128]	@ (8002dc8 <MX_TIM1_Init+0xa4>)
  8002d46:	601a      	str	r2, [r3, #0]
-  htim1.Init.Prescaler = 21600-1;
+  htim1.Init.Prescaler = 360-1;
  8002d48:	4b1e      	ldr	r3, [pc, #120]	@ (8002dc4 <MX_TIM1_Init+0xa0>)
- 8002d4a:	f245 425f 	movw	r2, #21599	@ 0x545f
+ 8002d4a:	f240 1267 	movw	r2, #359	@ 0x167
  8002d4e:	605a      	str	r2, [r3, #4]
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
  8002d50:	4b1c      	ldr	r3, [pc, #112]	@ (8002dc4 <MX_TIM1_Init+0xa0>)
