@@ -97,7 +97,7 @@ void UIManager_Init(UIManager_t *ui)
     SpriteAnimator_Init(&evolutionAnim, evolutionFrames, 1, 165, 8, 64, 35, 300, true);
 
     ui->menuState = MENU_MAIN;
-    ui->activeAnim = &idleAnim;
+    ui->activeAnim = moodeng.isSick ? &sickAnim : &idleAnim;
     ui->menuBarAnim = &menuBarAnim;
     ui->selectedStateAnim = &selectStateAnim;
     ui->heartAnim = &heartAnim;
